@@ -4285,7 +4285,7 @@ docker-compose logs app | tail -n 50`
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
       {/* Header */}
-      <header className="border-b bg-white/95 backdrop-blur supports-\[backdrop-filter\]:bg-white/60 shadow-sm">
+      <header className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -4645,7 +4645,7 @@ docker-compose logs app | tail -n 50`
       </div>
 
       {/* Footer */}
-      <footer className="border-t bg-white/95 backdrop-blur supports-\[backdrop-filter\]:bg-white/60 mt-12">
+  <footer className="border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 mt-12">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground">
