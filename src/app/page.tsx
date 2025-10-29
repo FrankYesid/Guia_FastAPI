@@ -348,28 +348,36 @@ async def read_item(item_id: int, q: str | None = None):
 
           {/* 2. Instalación y Configuración */}
           <TabsContent value="instalacion">
-            <Card>
+            <Card className="glass border-white/20 card-hover">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <span>2. Instalación y Configuración</span>
-                  <Badge variant="secondary">Primeros Pasos</Badge>
+                  <Badge className="bg-gradient-to-r from-green-500 to-teal-500 text-white border-0">
+                    Primeros Pasos
+                  </Badge>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white/80">
                   Configura tu entorno de desarrollo y ejecuta tu primer servidor FastAPI
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Requisitos Previos</h3>
-                    <ul className="space-y-2 text-muted-foreground">
+                  <div className="glass rounded-xl p-6">
+                    <h3 className="text-lg font-semibold mb-3 text-white flex items-center gap-2">
+                      <div className="h-5 w-5">🔧</div>
+                      Requisitos Previos
+                    </h3>
+                    <ul className="space-y-2 text-white/90">
                       <li>• Python 3.6 o superior</li>
                       <li>• pip (gestor de paquetes de Python)</li>
                       <li>• Un editor de código (VSCode, PyCharm, etc.)</li>
                     </ul>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Verificar Python</h3>
+                  <div className="glass rounded-xl p-6">
+                    <h3 className="text-lg font-semibold mb-3 text-white flex items-center gap-2">
+                      <div className="h-5 w-5">✅</div>
+                      Verificar Python
+                    </h3>
                     <CodeBlock
                       code="python --version"
                       language="bash"
@@ -378,16 +386,19 @@ async def read_item(item_id: int, q: str | None = None):
                   </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-white/20" />
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">1. Crear Entorno Virtual</h3>
-                  <p className="text-muted-foreground mb-4">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🐍</div>
+                    1. Crear Entorno Virtual
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     Es una buena práctica crear un entorno virtual para cada proyecto:
                   </p>
                   <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="font-medium mb-2">Windows</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white">Windows</h4>
                       <CodeBlock
                         code={`python -m venv venv
 venv\\Scripts\\activate`}
@@ -395,8 +406,8 @@ venv\\Scripts\\activate`}
                         id="venv-windows"
                       />
                     </div>
-                    <div>
-                      <h4 className="font-medium mb-2">macOS/Linux</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white">macOS/Linux</h4>
                       <CodeBlock
                         code={`python3 -m venv venv
 source venv/bin/activate`}
@@ -408,8 +419,11 @@ source venv/bin/activate`}
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">2. Instalar FastAPI y Uvicorn</h3>
-                  <p className="text-muted-foreground mb-4">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">📦</div>
+                    2. Instalar FastAPI y Uvicorn
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     Instala FastAPI y Uvicorn (el servidor ASGI):
                   </p>
                   <CodeBlock
@@ -418,14 +432,20 @@ pip install uvicorn[standard]`}
                     language="bash"
                     id="install-fastapi"
                   />
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Nota: La opción [standard] incluye uvicorn con extras recomendados para mejor rendimiento.
-                  </p>
+                  <div className="mt-2 p-4 glass rounded-xl">
+                    <h4 className="font-medium mb-2 text-white">Nota importante:</h4>
+                    <p className="text-sm text-white/80">
+                      La opción [standard] incluye uvicorn con extras recomendados para mejor rendimiento.
+                    </p>
+                  </div>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">3. Crear Primer Archivo</h3>
-                  <p className="text-muted-foreground mb-4">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">📝</div>
+                    3. Crear Primer Archivo
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     Crea un archivo llamado main.py:
                   </p>
                   <CodeBlock
@@ -442,8 +462,11 @@ async def root():
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">4. Ejecutar el Servidor</h3>
-                  <p className="text-muted-foreground mb-4">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🚀</div>
+                    4. Ejecutar el Servidor
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     Inicia el servidor con uvicorn:
                   </p>
                   <CodeBlock
@@ -451,42 +474,45 @@ async def root():
                     language="bash"
                     id="run-server"
                   />
-                  <div className="mt-4 p-4 bg-muted rounded-lg">
-                    <h4 className="font-medium mb-2">Explicación del comando:</h4>
-                    <ul className="space-y-1 text-sm text-muted-foreground">
-                      <li>• <code className="bg-background px-1 rounded">main</code>: el archivo main.py</li>
-                      <li>• <code className="bg-background px-1 rounded">app</code>: el objeto creado dentro de main.py</li>
-                      <li>• <code className="bg-background px-1 rounded">--reload</code>: recarga automáticamente al cambiar el código</li>
+                  <div className="mt-4 p-4 glass rounded-xl">
+                    <h4 className="font-medium mb-2 text-white">Explicación del comando:</h4>
+                    <ul className="space-y-1 text-sm text-white/80">
+                      <li>• <code className="glass px-2 py-1 rounded text-white">main</code>: el archivo main.py</li>
+                      <li>• <code className="glass px-2 py-1 rounded text-white">app</code>: el objeto creado dentro de main.py</li>
+                      <li>• <code className="glass px-2 py-1 rounded text-white">--reload</code>: recarga automáticamente al cambiar el código</li>
                     </ul>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">5. Verificar el Servidor</h3>
-                  <p className="text-muted-foreground mb-4">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🌐</div>
+                    5. Verificar el Servidor
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     Abre tu navegador en las siguientes direcciones:
                   </p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <ExternalLink className="h-4 w-4" />
-                      <a href="http://127.0.0.1:8000" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <div className="space-y-3">
+                    <div className="glass rounded-xl p-4 flex items-center gap-3">
+                      <ExternalLink className="h-5 w-5 text-green-400" />
+                      <a href="http://127.0.0.1:8000" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 font-medium">
                         http://127.0.0.1:8000
                       </a>
-                      <span className="text-muted-foreground">- Verás {"{\"message\": \"¡Hola, FastAPI!\"}"}</span>
+                      <span className="text-white/70">- Verás {"{\"message\": \"¡Hola, FastAPI!\"}"}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <ExternalLink className="h-4 w-4" />
-                      <a href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    <div className="glass rounded-xl p-4 flex items-center gap-3">
+                      <ExternalLink className="h-5 w-5 text-blue-400" />
+                      <a href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 font-medium">
                         http://127.0.0.1:8000/docs
                       </a>
-                      <span className="text-muted-foreground">- Documentación interactiva (Swagger UI)</span>
+                      <span className="text-white/70">- Documentación interactiva (Swagger UI)</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <ExternalLink className="h-4 w-4" />
-                      <a href="http://127.0.0.1:8000/redoc" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    <div className="glass rounded-xl p-4 flex items-center gap-3">
+                      <ExternalLink className="h-5 w-5 text-purple-400" />
+                      <a href="http://127.0.0.1:8000/redoc" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 font-medium">
                         http://127.0.0.1:8000/redoc
                       </a>
-                      <span className="text-muted-foreground">- Documentación alternativa (ReDoc)</span>
+                      <span className="text-white/70">- Documentación alternativa (ReDoc)</span>
                     </div>
                   </div>
                 </div>
@@ -496,20 +522,25 @@ async def root():
 
           {/* 3. Estructura del Proyecto */}
           <TabsContent value="estructura">
-            <Card>
+            <Card className="glass border-white/20 card-hover">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <span>3. Estructura del Proyecto</span>
-                  <Badge variant="secondary">Organización</Badge>
+                  <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0">
+                    Organización
+                  </Badge>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white/80">
                   Aprende a organizar tu proyecto FastAPI de manera escalable y mantenible
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Estructura Recomendada</h3>
-                  <p className="text-muted-foreground mb-4">
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">📁</div>
+                    Estructura Recomendada
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     Para proyectos medianos y grandes, se recomienda la siguiente estructura:
                   </p>
                   <CodeBlock
@@ -563,13 +594,19 @@ async def root():
                   />
                 </div>
 
-                <Separator />
+                <Separator className="bg-white/20" />
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">Archivos Clave</h3>
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🔑</div>
+                    Archivos Clave
+                  </h3>
                   <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium mb-2">main.py - Punto de Entrada</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white flex items-center gap-2">
+                        <div className="h-4 w-4">🚪</div>
+                        main.py - Punto de Entrada
+                      </h4>
                       <CodeBlock
                         code={`from fastapi import FastAPI
 from app.api.v1.api_v1 import api_router
@@ -590,8 +627,11 @@ async def root():
                       />
                     </div>
 
-                    <div>
-                      <h4 className="font-medium mb-2">config.py - Configuración</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white flex items-center gap-2">
+                        <div className="h-4 w-4">⚙️</div>
+                        config.py - Configuración
+                      </h4>
                       <CodeBlock
                         code={`from typing import Optional
 from pydantic import BaseSettings
@@ -616,8 +656,11 @@ settings = Settings()`}
                       />
                     </div>
 
-                    <div>
-                      <h4 className="font-medium mb-2">api_v1.py - Router Principal</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white flex items-center gap-2">
+                        <div className="h-4 w-4">🛣️</div>
+                        api_v1.py - Router Principal
+                      </h4>
                       <CodeBlock
                         code={`from fastapi import APIRouter
 from app.api.v1.endpoints import items, users
@@ -631,8 +674,11 @@ api_router.include_router(users.router, prefix="/users", tags=["users"])`}
                       />
                     </div>
 
-                    <div>
-                      <h4 className="font-medium mb-2">items.py - Endpoint de Ejemplo</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white flex items-center gap-2">
+                        <div className="h-4 w-4">📦</div>
+                        items.py - Endpoint de Ejemplo
+                      </h4>
                       <CodeBlock
                         code={`from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -664,14 +710,20 @@ def create_item(
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">Buenas Prácticas</h3>
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">⭐</div>
+                    Buenas Prácticas
+                  </h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    <Card>
+                    <Card className="glass border-white/10">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">Separación de Responsabilidades</CardTitle>
+                        <CardTitle className="text-sm text-white flex items-center gap-2">
+                          <div className="h-4 w-4">🔗</div>
+                          Separación de Responsabilidades
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="pt-0">
-                        <ul className="text-xs text-muted-foreground space-y-1">
+                        <ul className="text-xs text-white/80 space-y-1">
                           <li>• Modelos: estructura de datos</li>
                           <li>• Schemas: validación y serialización</li>
                           <li>• CRUD: operaciones de base de datos</li>
@@ -680,12 +732,15 @@ def create_item(
                         </ul>
                       </CardContent>
                     </Card>
-                    <Card>
+                    <Card className="glass border-white/10">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">Versionado de API</CardTitle>
+                        <CardTitle className="text-sm text-white flex items-center gap-2">
+                          <div className="h-4 w-4">📈</div>
+                          Versionado de API
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="pt-0">
-                        <ul className="text-xs text-muted-foreground space-y-1">
+                        <ul className="text-xs text-white/80 space-y-1">
                           <li>• Usa prefijos como /api/v1/</li>
                           <li>• Mantén versiones antiguas</li>
                           <li>• Documenta cambios</li>
@@ -701,20 +756,25 @@ def create_item(
 
           {/* 4. Creación de Endpoints */}
           <TabsContent value="endpoints">
-            <Card>
+            <Card className="glass border-white/20 card-hover">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <span>4. Creación de Endpoints</span>
-                  <Badge variant="secondary">Rutas y Métodos</Badge>
+                  <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0">
+                    Rutas y Métodos
+                  </Badge>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white/80">
                   Aprende a crear endpoints RESTful con diferentes métodos HTTP y manejo de parámetros
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Métodos HTTP Básicos</h3>
-                  <p className="text-muted-foreground mb-4">
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🔌</div>
+                    Métodos HTTP Básicos
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     FastAPI soporta todos los métodos HTTP estándar:
                   </p>
                   <CodeBlock
@@ -769,17 +829,23 @@ async def delete_item(item_id: int):
                   />
                 </div>
 
-                <Separator />
+                <Separator className="bg-white/20" />
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">Manejo de Parámetros</h3>
-                  <p className="text-muted-foreground mb-4">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">⚙️</div>
+                    Manejo de Parámetros
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     FastAPI ofrece varias formas de manejar parámetros:
                   </p>
                   
                   <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium mb-2">Parámetros de Ruta (Path Parameters)</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white flex items-center gap-2">
+                        <div className="h-4 w-4">🛣️</div>
+                        Parámetros de Ruta (Path Parameters)
+                      </h4>
                       <CodeBlock
                         code={`from fastapi import FastAPI
 from typing import Optional
@@ -801,8 +867,11 @@ async def get_product(product_id: int, q: Optional[str] = None):
                       />
                     </div>
 
-                    <div>
-                      <h4 className="font-medium mb-2">Parámetros de Consulta (Query Parameters)</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white flex items-center gap-2">
+                        <div className="h-4 w-4">❓</div>
+                        Parámetros de Consulta (Query Parameters)
+                      </h4>
                       <CodeBlock
                         code={`from fastapi import FastAPI, Query
 from typing import Optional, List
@@ -843,8 +912,11 @@ async def filter_items(
                       />
                     </div>
 
-                    <div>
-                      <h4 className="font-medium mb-2">Cuerpo de la Petición (Request Body)</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white flex items-center gap-2">
+                        <div className="h-4 w-4">📦</div>
+                        Cuerpo de la Petición (Request Body)
+                      </h4>
                       <CodeBlock
                         code={`from fastapi import FastAPI, Body
 from pydantic import BaseModel
@@ -896,8 +968,11 @@ async def create_user(
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Manejo de Errores</h3>
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">⚠️</div>
+                    Manejo de Errores
+                  </h3>
                   <CodeBlock
                     code={`from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
@@ -958,8 +1033,11 @@ async def create_item(item: Item):
                   />
                 </div>
 
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Headers y Cookies</h3>
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🍪</div>
+                    Headers y Cookies
+                  </h3>
                   <CodeBlock
                     code={`from fastapi import FastAPI, Header, Cookie
 from typing import Optional
@@ -1009,24 +1087,29 @@ async def login(response: Response):
 
           {/* 5. Validación y Modelos con Pydantic */}
           <TabsContent value="pydantic">
-            <Card>
+            <Card className="glass border-white/20 card-hover">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <span>5. Validación y Modelos con Pydantic</span>
-                  <Badge variant="secondary">Tipado y Validación</Badge>
+                  <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
+                    Tipado y Validación
+                  </Badge>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white/80">
                   Aprende a usar Pydantic para validar datos y crear modelos robustos
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Introducción a Pydantic</h3>
-                  <p className="text-muted-foreground mb-4">
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🔍</div>
+                    Introducción a Pydantic
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     Pydantic es una librería de validación de datos usando anotaciones de tipo de Python. 
                     FastAPI lo utiliza internamente para:
                   </p>
-                  <ul className="list-disc list-inside space-y-1 text-muted-foreground mb-4">
+                  <ul className="list-disc list-inside space-y-1 text-white/80 mb-4">
                     <li>Validar datos de entrada</li>
                     <li>Convertir tipos de datos</li>
                     <li>Generar documentación automática</li>
@@ -1064,13 +1147,19 @@ class User(UserBase):
                   />
                 </div>
 
-                <Separator />
+                <Separator className="bg-white/20" />
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">Validación Avanzada</h3>
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🛡️</div>
+                    Validación Avanzada
+                  </h3>
                   <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium mb-2">Validadores Personalizados</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white flex items-center gap-2">
+                        <div className="h-4 w-4">✨</div>
+                        Validadores Personalizados
+                      </h4>
                       <CodeBlock
                         code={`from pydantic import BaseModel, validator
 from typing import Optional
@@ -1102,8 +1191,10 @@ class User(BaseModel):
                       />
                     </div>
 
-                    <div>
-                      <h4 className="font-medium mb-2">Validación con Expresiones Regulares</h4>
+                    <div className="glass rounded-xl p-4">
+                      <h4 className="font-medium mb-2 text-white flex items-center gap-2">
+                        <div className="h-4 w-4">🔤</div>
+                        Validación con Expresiones Regulares</h4>
                       <CodeBlock
                         code={`from pydantic import BaseModel, Field, constr
 
@@ -1369,20 +1460,25 @@ async def upload_multiple_files(files: List[UploadFile]):
 
           {/* 6. Conexión con Base de Datos */}
           <TabsContent value="database">
-            <Card>
+            <Card className="glass border-white/20 card-hover">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <span>6. Conexión con Base de Datos</span>
-                  <Badge variant="secondary">SQLAlchemy y CRUD</Badge>
+                  <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">
+                    SQLAlchemy y CRUD
+                  </Badge>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white/80">
                   Aprende a integrar FastAPI con bases de datos usando SQLAlchemy y operaciones CRUD
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Configuración de SQLAlchemy</h3>
-                  <p className="text-muted-foreground mb-4">
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🗄️</div>
+                    Configuración de SQLAlchemy
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     Primero, instala las dependencias necesarias:
                   </p>
                   <CodeBlock
@@ -1390,7 +1486,7 @@ async def upload_multiple_files(files: List[UploadFile]):
                     language="bash"
                     id="install-sqlalchemy"
                   />
-                  <p className="text-muted-foreground mb-4">
+                  <p className="text-white/80 mb-4">
                     Configura la conexión a la base de datos:
                   </p>
                   <CodeBlock
@@ -1901,30 +1997,38 @@ alembic downgrade -1`}
 
           {/* 7. Documentación y Pruebas */}
           <TabsContent value="documentacion">
-            <Card>
+            <Card className="glass border-white/20 card-hover">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <span>7. Documentación y Pruebas</span>
-                  <Badge variant="secondary">Testing y Docs</Badge>
+                  <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
+                    Testing y Docs
+                  </Badge>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white/80">
                   Aprende a generar documentación automática y escribir pruebas para tu API
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Documentación Automática</h3>
-                  <p className="text-muted-foreground mb-4">
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">📚</div>
+                    Documentación Automática
+                  </h3>
+                  <p className="text-white/80 mb-4">
                     FastAPI genera automáticamente documentación interactiva:
                   </p>
                   <div className="grid md:grid-cols-2 gap-4">
-                    <Card>
+                    <Card className="glass border-white/10">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">Swagger UI</CardTitle>
+                        <CardTitle className="text-sm text-white flex items-center gap-2">
+                          <div className="h-4 w-4">📝</div>
+                          Swagger UI
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="pt-0">
-                        <p className="text-xs text-muted-foreground mb-2">
-                          Documentación interactiva en <code>/docs</code>
+                        <p className="text-xs text-white/80 mb-2">
+                          Documentación interactiva en <code className="glass px-1 rounded text-white">/docs</code>
                         </p>
                         <ul className="text-xs text-muted-foreground space-y-1">
                           <li>• Interfaz amigable</li>
@@ -2510,23 +2614,30 @@ pytest --html=report.html`}
 
           {/* 8. Despliegue */}
           <TabsContent value="despliegue">
-            <Card>
+            <Card className="glass border-white/20 card-hover">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <span>8. Despliegue</span>
-                  <Badge variant="secondary">Producción</Badge>
+                  <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white border-0">
+                    Producción
+                  </Badge>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white/80">
                   Aprende a desplegar tu aplicación FastAPI en diferentes entornos
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold mb-3">Preparación para Producción</h3>
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">🚀</div>
+                    Preparación para Producción
+                  </h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    <Card>
+                    <Card className="glass border-white/10">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">Configuración de Producción</CardTitle>
+                        <CardTitle className="text-sm text-white flex items-center gap-2">
+                          <div className="h-4 w-4">⚙️</div>
+                          Configuración de Producción</CardTitle>
                       </CardHeader>
                       <CardContent className="pt-0">
                         <ul className="text-xs text-muted-foreground space-y-1">
