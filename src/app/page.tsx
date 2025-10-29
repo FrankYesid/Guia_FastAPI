@@ -1,610 +1,851 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { BookOpen, Code, Database, FileText, Play, Settings, TestTube, Upload, Copy, ExternalLink, GraduationCap, Rocket } from 'lucide-react'
+import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Copy, CheckCircle, ExternalLink, Github, Play, Sparkles, Code, Zap, BookOpen, Rocket } from 'lucide-react';
 
 export default function FastAPIGuide() {
-  const [activeSection, setActiveSection] = useState('introduction')
-  const [copiedCode, setCopiedCode] = useState<string | null>(null)
-  const [apiResponse, setApiResponse] = useState('')
-  const [apiRequest, setApiRequest] = useState({
-    method: 'GET',
-    endpoint: '',
-    body: ''
-  })
-
-  const sections = [
-    { id: 'introduction', title: 'Introducción a FastAPI', icon: BookOpen },
-    { id: 'installation', title: 'Instalación y configuración', icon: Settings },
-    { id: 'structure', title: 'Estructura del proyecto', icon: FileText },
-    { id: 'endpoints', title: 'Creación de endpoints', icon: Code },
-    { id: 'validation', title: 'Validación y modelos con Pydantic', icon: Code },
-    { id: 'database', title: 'Conexión con Base de Datos', icon: Database },
-    { id: 'documentation', title: 'Documentación y pruebas', icon: TestTube },
-    { id: 'deployment', title: 'Despliegue', icon: Upload },
-    { id: 'playground', title: 'API Playground', icon: Play }
-  ]
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const copyToClipboard = async (code: string, id: string) => {
     try {
-      await navigator.clipboard.writeText(code)
-      setCopiedCode(id)
-      setTimeout(() => setCopiedCode(null), 2000)
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(id);
+      setTimeout(() => setCopiedCode(null), 2000);
     } catch (err) {
-      console.error('Error al copiar código:', err)
+      console.error('Error al copiar código:', err);
     }
-  }
+  };
 
-  const CodeBlock = ({ code, language = 'python', id }: { code: string; language?: string; id: string }) => (
+  const CodeBlock = ({ code, language, id }: { code: string; language: string; id: string }) => (
     <div className="relative">
-      <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
-        <code>{code}</code>
-      </pre>
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
-        className="absolute top-2 right-2"
+        className="absolute right-2 top-2 z-10 glass hover:bg-white/20"
         onClick={() => copyToClipboard(code, id)}
       >
-        {copiedCode === id ? '¡Copiado!' : <Copy className="h-4 w-4" />}
+        {copiedCode === id ? (
+          <CheckCircle className="h-4 w-4 text-green-400" />
+        ) : (
+          <Copy className="h-4 w-4 text-white/80" />
+        )}
       </Button>
+      <SyntaxHighlighter
+        language={language}
+        style={vscDarkPlus}
+        customStyle={{
+          margin: 0,
+          borderRadius: '0.75rem',
+          fontSize: '0.875rem',
+          background: 'rgba(0, 0, 0, 0.3)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+      >
+        {code}
+      </SyntaxHighlighter>
     </div>
-  )
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 animate-gradient relative overflow-hidden">
+      {/* Floating Particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-white/20 rounded-full animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`,
+            }}
+          />
+        ))}
+      </div>
+
       {/* Header */}
-      <header className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm">
+      <header className="glass border-b border-white/20 backdrop-blur-lg sticky top-0 z-50">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg">
-                <BookOpen className="h-8 w-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                <Sparkles className="h-6 w-6 text-yellow-300 animate-pulse" />
+                <h1 className="text-3xl md:text-4xl font-bold gradient-text">
                   Guía Completa de FastAPI
                 </h1>
-                <p className="text-muted-foreground mt-1">Aprende a construir APIs modernas y eficientes con Python</p>
+                <Sparkles className="h-6 w-6 text-yellow-300 animate-pulse" />
               </div>
+              <p className="text-lg text-white/90 font-medium">
+                Aprende a construir APIs modernas y eficientes con Python 🚀
+              </p>
             </div>
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="text-sm bg-gradient-to-r from-blue-100 to-purple-100">
-                Versión 2025
-              </Badge>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => window.location.href = '/detailed-guide'}
-                className="flex items-center gap-2 border-blue-200 hover:bg-blue-50"
-              >
-                <GraduationCap className="h-4 w-4" />
-                Guía Detallada
+            <div className="flex gap-3">
+              <Button className="glass hover:bg-white/20 text-white border-white/30 btn-glow">
+                <Github className="h-4 w-4 mr-2" />
+                GitHub
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => window.location.href = '/practical-example'}
-                className="flex items-center gap-2 border-green-200 hover:bg-green-50"
-              >
-                <Rocket className="h-4 w-4" />
-                Ejemplo Práctico
+              <Button className="bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white border-0 btn-glow animate-pulse-glow">
+                <Play className="h-4 w-4 mr-2" />
+                Probar Ejemplos
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex gap-6">
-          {/* Sidebar Navigation */}
-          <nav className="w-64 flex-shrink-0">
-            <Card className="sticky top-6 shadow-lg border-blue-100">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-lg">
-                <CardTitle className="text-lg flex items-center gap-2 text-blue-800">
-                  <FileText className="h-5 w-5" />
-                  Contenido
+      {/* Hero Section */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="glass rounded-2xl p-8 mb-8 text-center neon-border">
+          <div className="flex justify-center mb-4">
+            <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 glass">
+              <Zap className="h-5 w-5 text-yellow-300" />
+              <span className="text-white font-semibold">Aprende FastAPI de forma divertida</span>
+              <Zap className="h-5 w-5 text-yellow-300" />
+            </div>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 neon-text">
+            Domina el framework más moderno para crear APIs en Python
+          </h2>
+          <p className="text-lg text-white/80 max-w-3xl mx-auto">
+            Desde los conceptos básicos hasta el despliegue en producción. 
+            ¡Con ejemplos prácticos y un diseño que te hará amar programar!
+          </p>
+        </div>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="container mx-auto px-4 py-4">
+        <div className="glass rounded-full p-1 mb-6">
+          <div className="flex justify-between items-center text-white/80 text-sm px-4 py-2">
+            <span>¡Comienza tu viaje con FastAPI!</span>
+            <div className="flex items-center gap-2">
+              <div className="w-32 h-2 bg-white/20 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-green-400 to-blue-500 rounded-full animate-pulse" style={{width: '12.5%'}}></div>
+              </div>
+              <span>12.5%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 pb-8">
+        <Tabs defaultValue="introduccion" className="w-full">
+          <TabsList className="grid w-full grid-cols-8 mb-8 glass p-1 rounded-xl border border-white/20">
+            <TabsTrigger value="introduccion" className="glass data-[state=active]:bg-white/20 text-white hover:bg-white/10 transition-all duration-300">
+              <div className="flex flex-col items-center gap-1">
+                <BookOpen className="h-4 w-4" />
+                <span className="text-xs">1. Intro</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="instalacion" className="glass data-[state=active]:bg-white/20 text-white hover:bg-white/10 transition-all duration-300">
+              <div className="flex flex-col items-center gap-1">
+                <Code className="h-4 w-4" />
+                <span className="text-xs">2. Instal</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="estructura" className="glass data-[state=active]:bg-white/20 text-white hover:bg-white/10 transition-all duration-300">
+              <div className="flex flex-col items-center gap-1">
+                <div className="h-4 w-4">📁</div>
+                <span className="text-xs">3. Estruc</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="endpoints" className="glass data-[state=active]:bg-white/20 text-white hover:bg-white/10 transition-all duration-300">
+              <div className="flex flex-col items-center gap-1">
+                <div className="h-4 w-4">🔌</div>
+                <span className="text-xs">4. Endpoints</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="pydantic" className="glass data-[state=active]:bg-white/20 text-white hover:bg-white/10 transition-all duration-300">
+              <div className="flex flex-col items-center gap-1">
+                <div className="h-4 w-4">🔍</div>
+                <span className="text-xs">5. Pydantic</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="database" className="glass data-[state=active]:bg-white/20 text-white hover:bg-white/10 transition-all duration-300">
+              <div className="flex flex-col items-center gap-1">
+                <div className="h-4 w-4">🗄️</div>
+                <span className="text-xs">6. BD</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="documentacion" className="glass data-[state=active]:bg-white/20 text-white hover:bg-white/10 transition-all duration-300">
+              <div className="flex flex-col items-center gap-1">
+                <div className="h-4 w-4">📚</div>
+                <span className="text-xs">7. Docs</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="despliegue" className="glass data-[state=active]:bg-white/20 text-white hover:bg-white/10 transition-all duration-300">
+              <div className="flex flex-col items-center gap-1">
+                <Rocket className="h-4 w-4" />
+                <span className="text-xs">8. Deploy</span>
+              </div>
+            </TabsTrigger>
+          </TabsList>
+
+          {/* 1. Introducción a FastAPI */}
+          <TabsContent value="introduccion">
+            <Card className="glass border-white/20 card-hover">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <span>1. Introducción a FastAPI</span>
+                  <Badge className="bg-gradient-to-r from-pink-500 to-violet-500 text-white border-0">
+                    Conceptos Fundamentales
+                  </Badge>
                 </CardTitle>
+                <CardDescription className="text-white/80">
+                  Descubre qué es FastAPI y por qué se ha convertido en el framework preferido para construir APIs modernas en Python
+                </CardDescription>
               </CardHeader>
-              <CardContent className="p-0">
-                <ScrollArea className="h-[calc(100vh-200px)]">
-                  <div className="space-y-1 p-4">
-                    {sections.map((section) => {
-                      const Icon = section.icon
-                      const isActive = activeSection === section.id
-                      return (
-                        <Button
-                          key={section.id}
-                          variant={isActive ? "default" : "ghost"}
-                          className={`w-full justify-start transition-all duration-200 ${
-                            isActive 
-                              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' 
-                              : 'hover:bg-blue-50 hover:text-blue-700'
-                          }`}
-                          onClick={() => setActiveSection(section.id)}
-                        >
-                          <Icon className="mr-2 h-4 w-4" />
-                          {section.title}
-                        </Button>
-                      )
-                    })}
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </nav>
-
-          {/* Main Content */}
-          <main className="flex-1">
-            <div className="max-w-4xl">
-              {/* Introduction Section */}
-              {activeSection === 'introduction' && (
-                <Card className="shadow-lg border-blue-100">
-                  <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-lg border-b">
-                    <CardTitle className="flex items-center gap-2 text-blue-800">
-                      <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
-                        <BookOpen className="h-5 w-5 text-white" />
-                      </div>
-                      1. Introducción a FastAPI
-                    </CardTitle>
-                    <CardDescription className="text-blue-600">
-                      ¿Qué es FastAPI y por qué deberías usarlo?
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <p className="text-foreground leading-relaxed">
-                      FastAPI es un framework web moderno y de alto rendimiento para construir APIs con Python 3.7+ 
-                      basado en estándares abiertos. Es conocido por su velocidad, facilidad de uso y excelentes 
-                      características para el desarrollo de APIs.
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="glass rounded-xl p-6">
+                    <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                      <BookOpen className="h-5 w-5 text-yellow-300" />
+                      ¿Qué es FastAPI?
+                    </h3>
+                    <p className="text-white/90 mb-4">
+                      FastAPI es un framework web moderno y de alto rendimiento para construir APIs con Python 3.6+ 
+                      basado en anotaciones de tipo estándar de Python.
                     </p>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <Card className="border-blue-200 hover:shadow-md transition-shadow">
-                        <CardHeader className="bg-blue-50">
-                          <CardTitle className="text-lg text-blue-800">Ventajas Principales</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-2 text-sm">
-                            <li className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                              Alto rendimiento (comparable a Go y Node.js)
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                              Tipado estático con Pydantic
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                              Documentación automática (Swagger UI)
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                              Soporte para async/await
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                              Validación de datos automática
-                            </li>
-                            <li className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                              Inyección de dependencias
-                            </li>
-                          </ul>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="border-purple-200 hover:shadow-md transition-shadow">
-                        <CardHeader className="bg-purple-50">
-                          <CardTitle className="text-lg text-purple-800">Comparación con otros frameworks</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3 text-sm">
-                            <div className="flex items-start gap-2">
-                              <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
-                              <div>
-                                <strong>vs Flask:</strong> Más rápido, con tipado automático y documentación integrada
-                              </div>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
-                              <div>
-                                <strong>vs Django:</strong> Más ligero, enfocado en APIs, mejor rendimiento
-                              </div>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
-                              <div>
-                                <strong>vs Starlette:</strong> Más características, mejor documentación
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3 text-blue-800">Características Técnicas</h3>
-                      <div className="grid md:grid-cols-3 gap-4">
-                        <Card className="border-blue-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                          <CardContent className="p-6 text-center">
-                            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                              <Code className="h-6 w-6 text-white" />
-                            </div>
-                            <p className="font-medium text-blue-800">Basado en estándares</p>
-                            <p className="text-sm text-muted-foreground">OpenAPI, JSON Schema</p>
-                          </CardContent>
-                        </Card>
-                        <Card className="border-purple-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                          <CardContent className="p-6 text-center">
-                            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                              <TestTube className="h-6 w-6 text-white" />
-                            </div>
-                            <p className="font-medium text-purple-800">Documentación automática</p>
-                            <p className="text-sm text-muted-foreground">Swagger UI, ReDoc</p>
-                          </CardContent>
-                        </Card>
-                        <Card className="border-indigo-200 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                          <CardContent className="p-6 text-center">
-                            <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                              <Database className="h-6 w-6 text-white" />
-                            </div>
-                            <p className="font-medium text-indigo-800">Validación robusta</p>
-                            <p className="text-sm text-muted-foreground">Pydantic v2</p>
-                          </CardContent>
-                        </Card>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-white/90">Alto rendimiento: comparable con NodeJS y Go</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-white/90">Rápido de programar: aumenta la velocidad 2-3x</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-white/90">Fewer bugs: reduce aproximadamente el 40% de errores</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-400" />
+                        <span className="text-white/90">Intuitivo: excelente soporte para editores</span>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Installation Section */}
-              {activeSection === 'installation' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Settings className="h-6 w-6" />
-                      2. Instalación y configuración
-                    </CardTitle>
-                    <CardDescription>
-                      Cómo instalar FastAPI y configurar tu primer proyecto
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Requisitos Previos</h3>
-                      <p className="text-muted-foreground mb-4">
-                        Asegúrate de tener Python 3.7+ instalado en tu sistema.
-                      </p>
-                      <CodeBlock
-                        id="check-python"
-                        code={`python --version
-# o
-python3 --version`}
-                      />
+                  </div>
+                  <div className="glass rounded-xl p-6">
+                    <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                      <Zap className="h-5 w-5 text-yellow-300" />
+                      Ventajas Clave
+                    </h3>
+                    <div className="space-y-3">
+                      <Card className="glass border-white/10">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm text-white">Documentación Automática</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <p className="text-xs text-white/80">
+                            Genera automáticamente documentación interactiva con Swagger UI y ReDoc
+                          </p>
+                        </CardContent>
+                      </Card>
+                      <Card className="glass border-white/10">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm text-white">Tipado Fuerte</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <p className="text-xs text-white/80">
+                            Utiliza Pydantic para validación de datos y anotaciones de tipo
+                          </p>
+                        </CardContent>
+                      </Card>
+                      <Card className="glass border-white/10">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm text-white">Asíncrono por Defecto</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <p className="text-xs text-white/80">
+                            Soporte nativo para async/await y alto rendimiento
+                          </p>
+                        </CardContent>
+                      </Card>
                     </div>
+                  </div>
+                </div>
 
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Crear Entorno Virtual</h3>
-                      <CodeBlock
-                        id="virtual-env"
-                        code={`# Crear entorno virtual
-python -m venv fastapi-env
+                <Separator className="bg-white/20" />
 
-# Activar entorno virtual
-# Windows:
-fastapi-env\\Scripts\\activate
-# macOS/Linux:
-source fastapi-env/bin/activate`}
-                      />
-                    </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <div className="h-5 w-5">📊</div>
+                    Comparación con Otros Frameworks
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-white/20 glass rounded-xl overflow-hidden">
+                      <thead>
+                        <tr className="bg-white/10">
+                          <th className="border border-white/20 px-4 py-2 text-left text-white">Característica</th>
+                          <th className="border border-white/20 px-4 py-2 text-left text-white">FastAPI</th>
+                          <th className="border border-white/20 px-4 py-2 text-left text-white">Flask</th>
+                          <th className="border border-white/20 px-4 py-2 text-left text-white">Django</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="hover:bg-white/5 transition-colors">
+                          <td className="border border-white/20 px-4 py-2 text-white/90">Rendimiento</td>
+                          <td className="border border-white/20 px-4 py-2 text-green-400 font-semibold">Muy Alto</td>
+                          <td className="border border-white/20 px-4 py-2 text-yellow-400">Medio</td>
+                          <td className="border border-white/20 px-4 py-2 text-orange-400">Medio-Bajo</td>
+                        </tr>
+                        <tr className="hover:bg-white/5 transition-colors">
+                          <td className="border border-white/20 px-4 py-2 text-white/90">Curva de Aprendizaje</td>
+                          <td className="border border-white/20 px-4 py-2 text-green-400">Baja-Media</td>
+                          <td className="border border-white/20 px-4 py-2 text-green-400">Muy Baja</td>
+                          <td className="border border-white/20 px-4 py-2 text-red-400">Alta</td>
+                        </tr>
+                        <tr className="hover:bg-white/5 transition-colors">
+                          <td className="border border-white/20 px-4 py-2 text-white/90">Documentación Auto</td>
+                          <td className="border border-white/20 px-4 py-2 text-green-400">✓ Sí</td>
+                          <td className="border border-white/20 px-4 py-2 text-red-400">✗ No</td>
+                          <td className="border border-white/20 px-4 py-2 text-red-400">✗ No</td>
+                        </tr>
+                        <tr className="hover:bg-white/5 transition-colors">
+                          <td className="border border-white/20 px-4 py-2 text-white/90">Validación de Datos</td>
+                          <td className="border border-white/20 px-4 py-2 text-green-400">✓ Integrada</td>
+                          <td className="border border-white/20 px-4 py-2 text-red-400">✗ Manual</td>
+                          <td className="border border-white/20 px-4 py-2 text-yellow-400">✓ Básica</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Instalar FastAPI y Uvicorn</h3>
-                      <CodeBlock
-                        id="install-fastapi"
-                        code={`# Instalar FastAPI
-pip install fastapi
-
-# Instalar Uvicorn (servidor ASGI)
-pip install "uvicorn[standard]"
-
-# Instalar todo junto
-pip install "fastapi[all]"`}
-                      />
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Primer Servidor FastAPI</h3>
-                      <p className="text-muted-foreground mb-4">
-                        Crea un archivo llamado <code className="bg-muted px-1 rounded">main.py</code>:
-                      </p>
-                      <CodeBlock
-                        id="first-server"
-                        code={`from fastapi import FastAPI
+                <div>
+                  <h3 className="text-xl font-semibold mb-3 text-white flex items-center gap-2">
+                    <Code className="h-5 w-5 text-yellow-300" />
+                    Ejemplo Básico
+                  </h3>
+                  <CodeBlock
+                    code={`from fastapi import FastAPI
 
 app = FastAPI()
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+async def read_root():
+    return {"message": "¡Hola, FastAPI!"}
 
 @app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
+async def read_item(item_id: int, q: str | None = None):
     return {"item_id": item_id, "q": q}`}
-                      />
-                      <p className="text-muted-foreground mt-4 mb-4">
-                        Ejecuta el servidor:
-                      </p>
-                      <CodeBlock
-                        id="run-server"
-                        code={`uvicorn main:app --reload`}
-                      />
-                      <p className="text-muted-foreground mt-4">
-                        Visita <a href="http://127.0.0.1:8000" className="text-primary underline">http://127.0.0.1:8000</a> 
-                        para ver tu primer endpoint, y <a href="http://127.0.0.1:8000/docs" className="text-primary underline">http://127.0.0.1:8000/docs</a> 
-                        para la documentación automática.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                    language="python"
+                    id="intro-example"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-              {/* Project Structure Section */}
-              {activeSection === 'structure' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-6 w-6" />
-                      3. Estructura del proyecto
-                    </CardTitle>
-                    <CardDescription>
-                      Cómo organizar un proyecto FastAPI de manera profesional
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <p className="text-foreground leading-relaxed">
-                      Una buena estructura de proyecto es fundamental para mantener tu código organizado, 
-                      escalable y fácil de mantener. Aquí te mostramos una estructura recomendada para 
-                      proyectos FastAPI.
-                    </p>
+          {/* 2. Instalación y Configuración */}
+          <TabsContent value="instalacion">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span>2. Instalación y Configuración</span>
+                  <Badge variant="secondary">Primeros Pasos</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Configura tu entorno de desarrollo y ejecuta tu primer servidor FastAPI
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Requisitos Previos</h3>
+                    <ul className="space-y-2 text-muted-foreground">
+                      <li>• Python 3.6 o superior</li>
+                      <li>• pip (gestor de paquetes de Python)</li>
+                      <li>• Un editor de código (VSCode, PyCharm, etc.)</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Verificar Python</h3>
+                    <CodeBlock
+                      code="python --version"
+                      language="bash"
+                      id="check-python"
+                    />
+                  </div>
+                </div>
 
+                <Separator />
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">1. Crear Entorno Virtual</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Es una buena práctica crear un entorno virtual para cada proyecto:
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Estructura de Carpetas Recomendada</h3>
+                      <h4 className="font-medium mb-2">Windows</h4>
                       <CodeBlock
-                        id="project-structure"
-                        code={`fastapi_project/
+                        code={`python -m venv venv
+venv\\Scripts\\activate`}
+                        language="bash"
+                        id="venv-windows"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">macOS/Linux</h4>
+                      <CodeBlock
+                        code={`python3 -m venv venv
+source venv/bin/activate`}
+                        language="bash"
+                        id="venv-unix"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">2. Instalar FastAPI y Uvicorn</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Instala FastAPI y Uvicorn (el servidor ASGI):
+                  </p>
+                  <CodeBlock
+                    code={`pip install fastapi
+pip install uvicorn[standard]`}
+                    language="bash"
+                    id="install-fastapi"
+                  />
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Nota: La opción [standard] incluye uvicorn con extras recomendados para mejor rendimiento.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">3. Crear Primer Archivo</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Crea un archivo llamado main.py:
+                  </p>
+                  <CodeBlock
+                    code={`from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "¡Hola, FastAPI!"}`}
+                    language="python"
+                    id="first-file"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">4. Ejecutar el Servidor</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Inicia el servidor con uvicorn:
+                  </p>
+                  <CodeBlock
+                    code="uvicorn main:app --reload"
+                    language="bash"
+                    id="run-server"
+                  />
+                  <div className="mt-4 p-4 bg-muted rounded-lg">
+                    <h4 className="font-medium mb-2">Explicación del comando:</h4>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                      <li>• <code className="bg-background px-1 rounded">main</code>: el archivo main.py</li>
+                      <li>• <code className="bg-background px-1 rounded">app</code>: el objeto creado dentro de main.py</li>
+                      <li>• <code className="bg-background px-1 rounded">--reload</code>: recarga automáticamente al cambiar el código</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">5. Verificar el Servidor</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Abre tu navegador en las siguientes direcciones:
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      <a href="http://127.0.0.1:8000" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        http://127.0.0.1:8000
+                      </a>
+                      <span className="text-muted-foreground">- Verás {"{\"message\": \"¡Hola, FastAPI!\"}"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      <a href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        http://127.0.0.1:8000/docs
+                      </a>
+                      <span className="text-muted-foreground">- Documentación interactiva (Swagger UI)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      <a href="http://127.0.0.1:8000/redoc" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        http://127.0.0.1:8000/redoc
+                      </a>
+                      <span className="text-muted-foreground">- Documentación alternativa (ReDoc)</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* 3. Estructura del Proyecto */}
+          <TabsContent value="estructura">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span>3. Estructura del Proyecto</span>
+                  <Badge variant="secondary">Organización</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Aprende a organizar tu proyecto FastAPI de manera escalable y mantenible
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Estructura Recomendada</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Para proyectos medianos y grandes, se recomienda la siguiente estructura:
+                  </p>
+                  <CodeBlock
+                    code={`my_fastapi_project/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py              # Archivo principal de la aplicación
-│   ├── core/                # Configuración y utilidades centrales
+│   ├── main.py              # Punto de entrada principal
+│   ├── core/                # Configuración central
 │   │   ├── __init__.py
-│   │   ├── config.py        # Configuración de la aplicación
-│   │   └── security.py      # Funciones de seguridad
+│   │   ├── config.py        # Configuraciones
+│   │   └── database.py      # Conexión a base de datos
 │   ├── api/                 # Rutas de la API
 │   │   ├── __init__.py
 │   │   ├── v1/
 │   │   │   ├── __init__.py
-│   │   │   ├── endpoints.py
-│   │   │   └── dependencies.py
+│   │   │   ├── endpoints/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── items.py
+│   │   │   │   └── users.py
+│   │   │   └── api_v1.py    # Router principal v1
 │   ├── models/              # Modelos de base de datos
 │   │   ├── __init__.py
+│   │   ├── item.py
 │   │   └── user.py
-│   ├── schemas/             # Esquemas Pydantic
+│   ├── schemas/             # Modelos Pydantic
 │   │   ├── __init__.py
+│   │   ├── item.py
 │   │   └── user.py
 │   ├── crud/                # Operaciones CRUD
 │   │   ├── __init__.py
+│   │   ├── base.py
+│   │   ├── item.py
 │   │   └── user.py
-│   ├── db/                  # Configuración de base de datos
+│   ├── services/            # Lógica de negocio
 │   │   ├── __init__.py
-│   │   └── session.py
+│   │   ├── item.py
+│   │   └── user.py
 │   └── utils/               # Utilidades varias
 │       ├── __init__.py
-│       └── helpers.py
+│       └── security.py
 ├── tests/                   # Pruebas
 │   ├── __init__.py
-│   ├── test_api.py
-│   └── test_models.py
-├── requirements.txt         # Dependencias del proyecto
-├── .env                    # Variables de entorno
-├── .gitignore              # Archivos a ignorar en Git
-└── README.md               # Documentación del proyecto`}
+│   ├── conftest.py
+│   └── test_api.py
+├── .env                     # Variables de entorno
+├── requirements.txt         # Dependencias
+├── .gitignore
+└── README.md`}
+                    language="bash"
+                    id="project-structure"
+                  />
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Archivos Clave</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium mb-2">main.py - Punto de Entrada</h4>
+                      <CodeBlock
+                        code={`from fastapi import FastAPI
+from app.api.v1.api_v1 import api_router
+from app.core.config import settings
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+)
+
+app.include_router(api_router, prefix=settings.API_V1_STR)
+
+@app.get("/")
+async def root():
+    return {"message": "Bienvenido a mi API"}`}
+                        language="python"
+                        id="main-py"
                       />
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Archivos de Configuración</h3>
-                      <h4 className="font-medium mb-2">requirements.txt</h4>
+                      <h4 className="font-medium mb-2">config.py - Configuración</h4>
                       <CodeBlock
-                        id="requirements"
-                        code={`fastapi==0.104.1
-uvicorn[standard]==0.24.0
-sqlalchemy==2.0.23
-pydantic==2.5.0
-python-multipart==0.0.6
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-psycopg2-binary==2.9.9
-alembic==1.12.1`}
-                      />
-                    </div>
-
-                    <div>
-                      <h4 className="font-medium mb-2">app/core/config.py</h4>
-                      <CodeBlock
-                        id="config-py"
-                        code={`from pydantic_settings import BaseSettings
+                        code={`from typing import Optional
+from pydantic import BaseSettings
 
 class Settings(BaseSettings):
-    app_name: str = "FastAPI Project"
-    app_version: str = "1.0.0"
-    debug: bool = True
+    PROJECT_NAME: str = "Mi API FastAPI"
+    API_V1_STR: str = "/api/v1"
     
     # Database
-    database_url: str = "sqlite:///./test.db"
+    DATABASE_URL: str = "sqlite:///./app.db"
     
     # Security
-    secret_key: str = "your-secret-key-here"
-    algorithm: str = "HS256"
-    access_token_expire_minutes: int = 30
+    SECRET_KEY: str = "tu-secret-key-aqui"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     class Config:
         env_file = ".env"
 
 settings = Settings()`}
+                        language="python"
+                        id="config-py"
                       />
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Buenas Prácticas</h3>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">Organización</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <ul className="space-y-1 text-sm">
-                              <li>• Separa las rutas por versión</li>
-                              <li>• Usa módulos para cada entidad</li>
-                              <li>• Mantén la configuración centralizada</li>
-                              <li>• Documenta cada módulo</li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">Nomenclatura</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <ul className="space-y-1 text-sm">
-                              <li>• Usa snake_case para archivos y variables</li>
-                              <li>• Usa PascalCase para clases</li>
-                              <li>• Sé consistente en todo el proyecto</li>
-                              <li>• Nombra los archivos descriptivamente</li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                      <h4 className="font-medium mb-2">api_v1.py - Router Principal</h4>
+                      <CodeBlock
+                        code={`from fastapi import APIRouter
+from app.api.v1.endpoints import items, users
 
-              {/* Endpoints Section */}
-              {activeSection === 'endpoints' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Code className="h-6 w-6" />
-                      4. Creación de endpoints
-                    </CardTitle>
-                    <CardDescription>
-                      Cómo crear rutas HTTP en FastAPI con diferentes métodos
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <p className="text-foreground leading-relaxed">
-                      Los endpoints en FastAPI se definen usando decoradores que especifican el método HTTP 
-                      y la ruta. FastAPI soporta todos los métodos HTTP estándar: GET, POST, PUT, DELETE, 
-                      PATCH, HEAD, OPTIONS.
-                    </p>
+api_router = APIRouter()
+
+api_router.include_router(items.router, prefix="/items", tags=["items"])
+api_router.include_router(users.router, prefix="/users", tags=["users"])`}
+                        language="python"
+                        id="api-v1-py"
+                      />
+                    </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Métodos HTTP Básicos</h3>
+                      <h4 className="font-medium mb-2">items.py - Endpoint de Ejemplo</h4>
                       <CodeBlock
-                        id="basic-methods"
-                        code={`from fastapi import FastAPI, HTTPException
+                        code={`from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app import crud, models, schemas
+from app.core.database import get_db
+
+router = APIRouter()
+
+@router.get("/", response_model=list[schemas.Item])
+def read_items(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+):
+    items = crud.get_items(db, skip=skip, limit=limit)
+    return items
+
+@router.post("/", response_model=schemas.Item)
+def create_item(
+    item: schemas.ItemCreate,
+    db: Session = Depends(get_db)
+):
+    return crud.create_item(db=db, item=item)}`}
+                        language="python"
+                        id="items-py"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Buenas Prácticas</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Separación de Responsabilidades</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <ul className="text-xs text-muted-foreground space-y-1">
+                          <li>• Modelos: estructura de datos</li>
+                          <li>• Schemas: validación y serialización</li>
+                          <li>• CRUD: operaciones de base de datos</li>
+                          <li>• Services: lógica de negocio</li>
+                          <li>• API: endpoints HTTP</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Versionado de API</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <ul className="text-xs text-muted-foreground space-y-1">
+                          <li>• Usa prefijos como /api/v1/</li>
+                          <li>• Mantén versiones antiguas</li>
+                          <li>• Documenta cambios</li>
+                          <li>• Planifica la depreciación</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* 4. Creación de Endpoints */}
+          <TabsContent value="endpoints">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span>4. Creación de Endpoints</span>
+                  <Badge variant="secondary">Rutas y Métodos</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Aprende a crear endpoints RESTful con diferentes métodos HTTP y manejo de parámetros
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Métodos HTTP Básicos</h3>
+                  <p className="text-muted-foreground mb-4">
+                    FastAPI soporta todos los métodos HTTP estándar:
+                  </p>
+                  <CodeBlock
+                    code={`from fastapi import FastAPI, HTTPException
 from typing import Optional, List
 
 app = FastAPI()
 
-# GET - Obtener recursos
-@app.get("/users")
-def get_users():
-    return [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]
+# Base de datos simulada
+items_db = {
+    1: {"name": "Laptop", "price": 999.99, "in_stock": True},
+    2: {"name": "Mouse", "price": 29.99, "in_stock": True},
+    3: {"name": "Keyboard", "price": 79.99, "in_stock": False}
+}
 
-@app.get("/users/{user_id}")
-def get_user(user_id: int):
-    if user_id == 1:
-        return {"id": 1, "name": "Alice"}
-    raise HTTPException(status_code=404, detail="User not found")
+# GET - Obtener todos los items
+@app.get("/items/", response_model=List[dict])
+async def get_all_items():
+    return list(items_db.values())
 
-# POST - Crear nuevos recursos
-@app.post("/users")
-def create_user(user: dict):
-    # En la práctica, aquí guardarías en la base de datos
-    return {"id": 3, "name": user["name"], "status": "created"}
+# GET - Obtener un item específico
+@app.get("/items/{item_id}", response_model=dict)
+async def get_item(item_id: int):
+    if item_id not in items_db:
+        raise HTTPException(status_code=404, detail="Item no encontrado")
+    return items_db[item_id]
 
-# PUT - Actualizar recursos existentes
-@app.put("/users/{user_id}")
-def update_user(user_id: int, user: dict):
-    if user_id == 1:
-        return {"id": user_id, "name": user["name"], "status": "updated"}
-    raise HTTPException(status_code=404, detail="User not found")
+# POST - Crear un nuevo item
+@app.post("/items/", response_model=dict, status_code=201)
+async def create_item(item: dict):
+    new_id = max(items_db.keys()) + 1
+    items_db[new_id] = item
+    return {"id": new_id, **item}
 
-# DELETE - Eliminar recursos
-@app.delete("/users/{user_id}")
-def delete_user(user_id: int):
-    if user_id == 1:
-        return {"status": "deleted", "user_id": user_id}
-    raise HTTPException(status_code=404, detail="User not found")`}
-                      />
-                    </div>
+# PUT - Actualizar un item existente
+@app.put("/items/{item_id}", response_model=dict)
+async def update_item(item_id: int, item: dict):
+    if item_id not in items_db:
+        raise HTTPException(status_code=404, detail="Item no encontrado")
+    items_db[item_id] = item
+    return {"id": item_id, **item}
 
+# DELETE - Eliminar un item
+@app.delete("/items/{item_id}")
+async def delete_item(item_id: int):
+    if item_id not in items_db:
+        raise HTTPException(status_code=404, detail="Item no encontrado")
+    del items_db[item_id]
+    return {"message": "Item eliminado correctamente"}`}
+                    language="python"
+                    id="basic-methods"
+                  />
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Manejo de Parámetros</h3>
+                  <p className="text-muted-foreground mb-4">
+                    FastAPI ofrece varias formas de manejar parámetros:
+                  </p>
+                  
+                  <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Parámetros de Ruta y Query</h3>
+                      <h4 className="font-medium mb-2">Parámetros de Ruta (Path Parameters)</h4>
                       <CodeBlock
-                        id="parameters"
-                        code={`from fastapi import FastAPI, Query, Path
+                        code={`from fastapi import FastAPI
 from typing import Optional
 
 app = FastAPI()
 
-# Parámetros de ruta (Path parameters)
-@app.get("/items/{item_id}")
-def read_item(
-    item_id: int = Path(..., description="ID del item a obtener", gt=0),
-    q: Optional[str] = Query(None, description="Parámetro de búsqueda opcional"),
-    short: bool = Query(False, description="Mostrar versión resumida")
-):
-    item = {"item_id": item_id}
-    if q:
-        item.update({"q": q})
-    if not short:
-        item.update(
-            {
-                "description": "Este es un item de ejemplo",
-                "price": 42.0
-            }
-        )
-    return item
+@app.get("/users/{user_id}")
+async def get_user(user_id: int):
+    return {"user_id": user_id, "message": f"Obteniendo usuario {user_id}"}
 
-# Múltiples parámetros de ruta
-@app.get("/users/{user_id}/posts/{post_id}")
-def get_user_post(
-    user_id: int = Path(..., gt=0),
-    post_id: int = Path(..., gt=0),
-    summary: Optional[str] = Query(None, max_length=50)
-):
-    return {"user_id": user_id, "post_id": post_id, "summary": summary}`}
+# Validación automática
+@app.get("/products/{product_id}")
+async def get_product(product_id: int, q: Optional[str] = None):
+    if product_id < 1:
+        return {"error": "El ID debe ser mayor que 0"}
+    return {"product_id": product_id, "query": q}`}
+                        language="python"
+                        id="path-params"
                       />
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Cuerpo de la Petición (Request Body)</h3>
+                      <h4 className="font-medium mb-2">Parámetros de Consulta (Query Parameters)</h4>
                       <CodeBlock
-                        id="request-body"
+                        code={`from fastapi import FastAPI, Query
+from typing import Optional, List
+
+app = FastAPI()
+
+@app.get("/items/")
+async def read_items(
+    q: Optional[str] = Query(None, max_length=50),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=100),
+    sort_by: Optional[str] = Query(None, regex="^(name|price|created_at)$")
+):
+    return {
+        "query": q,
+        "skip": skip,
+        "limit": limit,
+        "sort_by": sort_by
+    }
+
+# Parámetros obligatorios
+@app.get("/search/")
+async def search_items(
+    query: str = Query(..., min_length=3),
+    category: Optional[str] = None
+):
+    return {"query": query, "category": category}
+
+# Listas de parámetros
+@app.get("/filter/")
+async def filter_items(
+    tags: List[str] = Query([]),
+    price_range: Optional[List[float]] = None
+):
+    return {"tags": tags, "price_range": price_range}`}
+                        language="python"
+                        id="query-params"
+                      />
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium mb-2">Cuerpo de la Petición (Request Body)</h4>
+                      <CodeBlock
                         code={`from fastapi import FastAPI, Body
 from pydantic import BaseModel
 from typing import Optional
@@ -618,107 +859,197 @@ class Item(BaseModel):
     tax: Optional[float] = None
 
 @app.post("/items/")
-def create_item(item: Item):
-    # FastAPI valida automáticamente los datos usando Pydantic
-    item_dict = item.model_dump()
+async def create_item(item: Item):
+    # FastAPI valida automáticamente los datos
+    item_dict = item.dict()
     if item.tax:
         price_with_tax = item.price + item.tax
         item_dict.update({"price_with_tax": price_with_tax})
     return item_dict
 
-# Usando Body para más control
+# Body anidados
 @app.put("/items/{item_id}")
-def update_item(
+async def update_item(
     item_id: int,
     item: Item,
-    user: str = Body(..., embed=True),
-    importance: int = Body(..., gt=0, le=5)
+    user: Optional[str] = Body(None),
+    priority: int = Body(..., ge=1, le=5)
 ):
-    results = {"item_id": item_id, "item": item, "user": user, "importance": importance}
-    return results`}
+    return {
+        "item_id": item_id,
+        "item": item,
+        "user": user,
+        "priority": priority
+    }
+
+# Múltiples body parameters
+@app.post("/users/")
+async def create_user(
+    user: dict = Body(..., example={"name": "John", "age": 30}),
+    profile: dict = Body(..., example={"bio": "Developer", "location": "NYC"})
+):
+    return {"user": user, "profile": profile}`}
+                        language="python"
+                        id="body-params"
                       />
                     </div>
+                  </div>
+                </div>
 
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Respuestas y Códigos de Estado</h3>
-                      <CodeBlock
-                        id="responses"
-                        code={`from fastapi import FastAPI, status
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Manejo de Errores</h3>
+                  <CodeBlock
+                    code={`from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-@app.get("/items/{item_id}", status_code=status.HTTP_200_OK)
-def read_item(item_id: int):
-    if item_id == 42:
-        return {"item_id": item_id, "name": "La respuesta a todo"}
-    return {"item_id": item_id, "name": "Item normal"}
+items = {"foo": "The Foo Wrestlers"}
 
-# Respuestas personalizadas
-@app.post("/create/", status_code=status.HTTP_201_CREATED)
-def create_resource():
-    return {"message": "Recurso creado exitosamente"}
-
-# Múltiples respuestas posibles
-@app.get("/maybe-exists/{item_id}")
-def maybe_exists(item_id: int):
-    if item_id < 0:
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"message": "ID no puede ser negativo"}
-        )
-    if item_id == 999:
-        return JSONResponse(
+@app.get("/items/{item_id}")
+async def read_item(item_id: str):
+    if item_id not in items:
+        raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": "Item no encontrado"}
+            detail="Item no encontrado",
+            headers={"X-Error": "There goes my error"},
         )
-    return {"item_id": item_id, "exists": True}`}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+    return {"item": items[item_id]}
 
-              {/* Validation Section */}
-              {activeSection === 'validation' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Code className="h-6 w-6" />
-                      5. Validación y modelos con Pydantic
-                    </CardTitle>
-                    <CardDescription>
-                      Cómo usar Pydantic para validar datos y generar documentación automática
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <p className="text-foreground leading-relaxed">
-                      Pydantic es una librería de validación de datos que usa type hints para validar y 
-                      serializar datos. FastAPI integra Pydantic para proporcionar validación automática 
-                      de datos de entrada y salida.
-                    </p>
+# Excepciones personalizadas
+class UnicornException(Exception):
+    def __init__(self, name: str):
+        self.name = name
 
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Modelos Básicos con Pydantic</h3>
-                      <CodeBlock
-                        id="basic-models"
-                        code={`from pydantic import BaseModel, Field, EmailStr
+@app.exception_handler(UnicornException)
+async def unicorn_exception_handler(request, exc: UnicornException):
+    return JSONResponse(
+        status_code=418,
+        content={"message": f"Oops! {exc.name} hizo algo mal."},
+    )
+
+@app.get("/unicorns/{name}")
+async def read_unicorn(name: str):
+    if name == "yolo":
+        raise UnicornException(name=name)
+    return {"unicorn_name": name}
+
+# Validación de errores con Pydantic
+from pydantic import BaseModel, ValidationError
+
+class Item(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    tax: Optional[float] = None
+
+@app.post("/items/")
+async def create_item(item: Item):
+    try:
+        # La validación ocurre automáticamente
+        return item
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=422,
+            detail=e.errors()
+        )`}
+                    language="python"
+                    id="error-handling"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Headers y Cookies</h3>
+                  <CodeBlock
+                    code={`from fastapi import FastAPI, Header, Cookie
+from typing import Optional
+
+app = FastAPI()
+
+@app.get("/headers/")
+async def read_headers(
+    user_agent: Optional[str] = Header(None),
+    accept_language: Optional[str] = Header(None, alias="Accept-Language")
+):
+    return {
+        "User-Agent": user_agent,
+        "Accept-Language": accept_language
+    }
+
+@app.get("/cookies/")
+async def read_cookies(
+    session_id: Optional[str] = Cookie(None),
+    preferences: Optional[str] = Cookie(None)
+):
+    return {
+        "session_id": session_id,
+        "preferences": preferences
+    }
+
+# Establecer cookies en la respuesta
+from fastapi import Response
+
+@app.post("/login/")
+async def login(response: Response):
+    response.set_cookie(
+        key="session_id",
+        value="abc123",
+        httponly=True,
+        max_age=1800,
+        expires=1800
+    )
+    return {"message": "Login exitoso"}`}
+                    language="python"
+                    id="headers-cookies"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* 5. Validación y Modelos con Pydantic */}
+          <TabsContent value="pydantic">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span>5. Validación y Modelos con Pydantic</span>
+                  <Badge variant="secondary">Tipado y Validación</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Aprende a usar Pydantic para validar datos y crear modelos robustos
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Introducción a Pydantic</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Pydantic es una librería de validación de datos usando anotaciones de tipo de Python. 
+                    FastAPI lo utiliza internamente para:
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground mb-4">
+                    <li>Validar datos de entrada</li>
+                    <li>Convertir tipos de datos</li>
+                    <li>Generar documentación automática</li>
+                    <li>Proporcionar autocompletado en editores</li>
+                  </ul>
+                  <CodeBlock
+                    code={`from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
 from datetime import datetime
 
 class UserBase(BaseModel):
-    username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
-    full_name: Optional[str] = Field(None, max_length=100)
+    username: str = Field(..., min_length=3, max_length=20)
+    full_name: Optional[str] = None
     age: Optional[int] = Field(None, ge=18, le=120)
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8)
 
 class UserUpdate(BaseModel):
-    username: Optional[str] = Field(None, min_length=3, max_length=50)
     email: Optional[EmailStr] = None
-    full_name: Optional[str] = Field(None, max_length=100)
+    username: Optional[str] = Field(None, min_length=3, max_length=20)
+    full_name: Optional[str] = None
     age: Optional[int] = Field(None, ge=18, le=120)
 
 class User(UserBase):
@@ -727,530 +1058,1038 @@ class User(UserBase):
     created_at: datetime
     
     class Config:
-        from_attributes = True
+        orm_mode = True  # Permite leer datos desde ORMs`}
+                    language="python"
+                    id="pydantic-intro"
+                  />
+                </div>
 
-# Uso en FastAPI
-@app.post("/users/", response_model=User)
-def create_user(user: UserCreate):
-    # La validación ocurre automáticamente
-    # user.password estará disponible aquí
-    # pero no se incluirá en la respuesta
-    return {"id": 1, **user.model_dump(), "is_active": True, "created_at": datetime.now()}`}
-                      />
-                    </div>
+                <Separator />
 
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Validación Avanzada</h3>
+                  <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Validación Avanzada</h3>
+                      <h4 className="font-medium mb-2">Validadores Personalizados</h4>
                       <CodeBlock
-                        id="advanced-validation"
-                        code={`from pydantic import BaseModel, Field, validator
-from typing import List
-import re
+                        code={`from pydantic import BaseModel, validator
+from typing import Optional
 
-class Product(BaseModel):
-    name: str = Field(..., min_length=2, max_length=100)
-    price: float = Field(..., gt=0)
-    tags: List[str] = Field(default_factory=list)
-    description: Optional[str] = None
-    sku: str
-    
-    @validator('sku')
-    def validate_sku(cls, v):
-        if not re.match(r'^[A-Z]{2}-\\d{4}$', v):
-            raise ValueError('SKU debe tener formato XX-1234')
-        return v.upper()
-    
-    @validator('tags')
-    def validate_tags(cls, v):
-        if len(v) > 5:
-            raise ValueError('Máximo 5 tags permitidos')
-        return [tag.lower() for tag in v]
+class User(BaseModel):
+    name: str
+    email: str
+    age: Optional[int] = None
     
     @validator('name')
-    def validate_name(cls, v):
-        if 'oficial' in v.lower():
-            raise ValueError('El nombre no puede contener "oficial"')
+    def name_must_contain_space(cls, v):
+        if ' ' not in v:
+            raise ValueError('El nombre debe contener un espacio')
         return v.title()
-
-# Uso con validación personalizada
-@app.post("/products/")
-def create_product(product: Product):
-    return {"message": "Producto creado", "product": product}`}
+    
+    @validator('email')
+    def email_must_be_valid(cls, v):
+        if '@' not in v:
+            raise ValueError('Email inválido')
+        return v.lower()
+    
+    @validator('age')
+    def age_must_be_reasonable(cls, v):
+        if v is not None and (v < 0 or v > 150):
+            raise ValueError('La edad debe estar entre 0 y 150')
+        return v`}
+                        language="python"
+                        id="custom-validators"
                       />
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Modelos Anidados y Relaciones</h3>
+                      <h4 className="font-medium mb-2">Validación con Expresiones Regulares</h4>
                       <CodeBlock
-                        id="nested-models"
-                        code={`from pydantic import BaseModel
-from typing import List, Optional
+                        code={`from pydantic import BaseModel, Field, constr
+
+class Product(BaseModel):
+    name: constr(min_length=1, max_length=100)
+    sku: constr(regex=r'^[A-Z]{2}-\\d{4}$')  # Formato: AB-1234
+    price: float = Field(..., gt=0)
+    description: Optional[str] = None
+    
+    # Ejemplos válidos:
+    # name: "Laptop Dell"
+    # sku: "DL-2024"
+    # price: 999.99`}
+                        language="python"
+                        id="regex-validation"
+                      />
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium mb-2">Campos Calculados</h4>
+                      <CodeBlock
+                        code={`from pydantic import BaseModel, validator
+from datetime import datetime, date
+
+class Person(BaseModel):
+    first_name: str
+    last_name: str
+    birth_date: date
+    
+    @property
+    def full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+    
+    @property
+    def age(self) -> int:
+        today = date.today()
+        return today.year - self.birth_date.year - (
+            (today.month, today.day) < (self.birth_date.month, self.birth_date.day)
+        )
+    
+    @validator('birth_date')
+    def birth_date_not_in_future(cls, v):
+        if v > date.today():
+            raise ValueError('La fecha de nacimiento no puede estar en el futuro')
+        return v`}
+                        language="python"
+                        id="computed-fields"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Modelos Anidados y Complejos</h3>
+                  <CodeBlock
+                    code={`from pydantic import BaseModel, HttpUrl
+from typing import List, Optional, Dict
+from enum import Enum
+
+class Category(str, Enum):
+    ELECTRONICS = "electronics"
+    CLOTHING = "clothing"
+    BOOKS = "books"
 
 class Address(BaseModel):
     street: str
     city: str
-    state: str
-    zip_code: str
-    country: str = "USA"
+    country: str
+    postal_code: str
 
-class Company(BaseModel):
+class Review(BaseModel):
+    rating: int = Field(..., ge=1, le=5)
+    comment: Optional[str] = None
+    reviewer: str
+
+class Product(BaseModel):
     name: str
-    address: Address
-    employees: List[str] = []
-
-class User(BaseModel):
-    id: int
-    name: str
-    email: str
-    company: Optional[Company] = None
-    addresses: List[Address] = []
-
-# Ejemplo de uso
-@app.post("/users/")
-def create_user(user: User):
-    # FastAPI validará toda la estructura anidada
-    return {"message": "Usuario creado", "user": user}
-
-# Response models anidados
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    company: Optional[Company] = None
+    description: Optional[str] = None
+    price: float = Field(..., gt=0)
+    category: Category
+    tags: List[str] = []
+    images: List[HttpUrl] = []
+    reviews: List[Review] = []
+    metadata: Dict[str, str] = {}
     
     class Config:
-        from_attributes = True
+        schema_extra = {
+            "example": {
+                "name": "Smartphone XYZ",
+                "description": "Último modelo con cámara de alta resolución",
+                "price": 699.99,
+                "category": "electronics",
+                "tags": ["smartphone", "tech", "mobile"],
+                "images": ["https://example.com/image1.jpg"],
+                "reviews": [
+                    {
+                        "rating": 5,
+                        "comment": "Excelente producto",
+                        "reviewer": "John Doe"
+                    }
+                ],
+                "metadata": {"brand": "XYZ", "model": "2024"}
+            }
+        }
 
-@app.get("/users/{user_id}", response_model=UserResponse)
-def get_user(user_id: int):
-    # Solo se devolverán los campos definidos en UserResponse
-    return {"id": user_id, "name": "John Doe", "company": None}`}
-                      />
-                    </div>
+class Order(BaseModel):
+    id: int
+    products: List[Product]
+    shipping_address: Address
+    total_amount: float
+    created_at: datetime`}
+                    language="python"
+                    id="nested-models"
+                  />
+                </div>
 
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Validación de Listas y Enums</h3>
-                      <CodeBlock
-                        id="list-enum-validation"
-                        code={`from pydantic import BaseModel, Field
-from typing import List, Literal
-from enum import Enum
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Integración con FastAPI</h3>
+                  <CodeBlock
+                    code={`from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, EmailStr
+from typing import List, Optional
 
-class UserRole(str, Enum):
-    ADMIN = "admin"
-    MODERATOR = "moderator"
-    USER = "user"
+app = FastAPI()
 
-class PostStatus(str, Enum):
-    DRAFT = "draft"
-    PUBLISHED = "published"
-    ARCHIVED = "archived"
+# Modelos Pydantic
+class ItemBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    price: float = Field(..., gt=0)
 
-class Post(BaseModel):
-    title: str = Field(..., min_length=5, max_length=200)
-    content: str = Field(..., min_length=10)
-    status: PostStatus = PostStatus.DRAFT
-    tags: List[str] = Field(default_factory=list, max_items=10)
-    priority: Literal["low", "medium", "high"] = "medium"
-    
-    @validator('tags')
-    def validate_tags(cls, v):
-        return [tag.strip().lower() for tag in v if tag.strip()]
-
-class User(BaseModel):
-    username: str
-    role: UserRole = UserRole.USER
-    posts: List[Post] = Field(default_factory=list)
-
-# Uso con enums y listas
-@app.post("/posts/")
-def create_post(post: Post):
-    return {"message": "Post creado", "post": post}
-
-@app.post("/users/")
-def create_user(user: User):
-    return {"message": "Usuario creado", "user": user}`}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Database Section */}
-              {activeSection === 'database' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Database className="h-6 w-6" />
-                      6. Conexión con Base de Datos
-                    </CardTitle>
-                    <CardDescription>
-                      Integración con SQLAlchemy y operaciones CRUD asíncronas
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <p className="text-foreground leading-relaxed">
-                      FastAPI se integra perfectamente con bases de datos usando SQLAlchemy. 
-                      Recomendamos usar el modo asíncrono con asyncpg para PostgreSQL o 
-                      aiosqlite para SQLite para mejor rendimiento.
-                    </p>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Configuración de Base de Datos</h3>
-                      <CodeBlock
-                        id="db-config"
-                        code={`# app/core/config.py
-from pydantic_settings import BaseSettings
-
-class Settings(BaseSettings):
-    database_url: str = "sqlite+aiosqlite:///./test.db"
-    # Para PostgreSQL:
-    # database_url: str = "postgresql+asyncpg://user:password@localhost/dbname"
-    
-    class Config:
-        env_file = ".env"
-
-settings = Settings()
-
-# app/db/session.py
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
-from app.core.config import settings
-
-engine = create_async_engine(settings.database_url, echo=True)
-AsyncSessionLocal = sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
-)
-
-# Dependencia para obtener la sesión de base de datos
-async def get_db() -> AsyncSession:
-    async with AsyncSessionLocal() as session:
-        try:
-            yield session
-        finally:
-            await session.close()`}
-                      />
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Modelos de Base de Datos</h3>
-                      <CodeBlock
-                        id="db-models"
-                        code={`# app/models/base.py
-from sqlalchemy.ext.asyncio import AsyncAttrs
-from sqlalchemy.orm import DeclarativeBase
-
-class Base(AsyncAttrs, DeclarativeBase):
+class ItemCreate(ItemBase):
     pass
 
-# app/models/user.py
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text
+class ItemUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = Field(None, gt=0)
+
+class Item(ItemBase):
+    id: int
+    owner_id: int
+    
+    class Config:
+        orm_mode = True
+
+class UserBase(BaseModel):
+    email: EmailStr
+    username: str = Field(..., min_length=3, max_length=20)
+
+class UserCreate(UserBase):
+    password: str = Field(..., min_length=8)
+
+class User(UserBase):
+    id: int
+    is_active: bool = True
+    items: List[Item] = []
+    
+    class Config:
+        orm_mode = True
+
+# Endpoints
+@app.post("/users/", response_model=User)
+async def create_user(user: UserCreate):
+    # Lógica para crear usuario
+    return user  # Simplificado para el ejemplo
+
+@app.get("/users/{user_id}", response_model=User)
+async def read_user(user_id: int):
+    # Lógica para obtener usuario
+    return {"id": user_id, "email": "user@example.com", "username": "test", "is_active": True}
+
+@app.post("/users/{user_id}/items/", response_model=Item)
+async def create_item_for_user(user_id: int, item: ItemCreate):
+    # Lógica para crear item
+    return {"id": 1, "owner_id": user_id, **item.dict()}
+
+@app.get("/items/", response_model=List[Item])
+async def read_items(skip: int = 0, limit: int = 100):
+    # Lógica para obtener items
+    return []  # Simplificado para el ejemplo`}
+                    language="python"
+                    id="fastapi-integration"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Manejo de Archivos</h3>
+                  <CodeBlock
+                    code={`from fastapi import FastAPI, File, UploadFile, Form
+from pydantic import BaseModel
+from typing import Optional, List
+
+app = FastAPI()
+
+class ProfileCreate(BaseModel):
+    username: str
+    bio: Optional[str] = None
+
+@app.post("/upload-profile/")
+async def upload_profile(
+    username: str = Form(...),
+    bio: Optional[str] = Form(None),
+    profile_pic: UploadFile = File(...),
+    documents: List[UploadFile] = File([])
+):
+    # Validar archivo de imagen
+    if not profile_pic.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=400,
+            detail="El archivo debe ser una imagen"
+        )
+    
+    # Procesar archivos
+    contents = await profile_pic.read()
+    
+    # Guardar archivos (ejemplo)
+    with open(f"uploads/{profile_pic.filename}", "wb") as f:
+        f.write(contents)
+    
+    for doc in documents:
+        doc_contents = await doc.read()
+        with open(f"uploads/{doc.filename}", "wb") as f:
+            f.write(doc_contents)
+    
+    return {
+        "username": username,
+        "bio": bio,
+        "profile_pic": profile_pic.filename,
+        "documents": [doc.filename for doc in documents]
+    }
+
+# Subir múltiples archivos
+@app.post("/upload-multiple/")
+async def upload_multiple_files(files: List[UploadFile]):
+    uploaded_files = []
+    
+    for file in files:
+        contents = await file.read()
+        filename = file.filename
+        
+        # Validar tipo de archivo
+        if file.content_type not in ["image/jpeg", "image/png", "application/pdf"]:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Tipo de archivo no soportado: {file.content_type}"
+            )
+        
+        # Guardar archivo
+        with open(f"uploads/{filename}", "wb") as f:
+            f.write(contents)
+        
+        uploaded_files.append(filename)
+    
+    return {"uploaded_files": uploaded_files}`}
+                    language="python"
+                    id="file-handling"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* 6. Conexión con Base de Datos */}
+          <TabsContent value="database">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span>6. Conexión con Base de Datos</span>
+                  <Badge variant="secondary">SQLAlchemy y CRUD</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Aprende a integrar FastAPI con bases de datos usando SQLAlchemy y operaciones CRUD
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Configuración de SQLAlchemy</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Primero, instala las dependencias necesarias:
+                  </p>
+                  <CodeBlock
+                    code="pip install sqlalchemy alembic psycopg2-binary"
+                    language="bash"
+                    id="install-sqlalchemy"
+                  />
+                  <p className="text-muted-foreground mb-4">
+                    Configura la conexión a la base de datos:
+                  </p>
+                  <CodeBlock
+                    code={`from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import os
+
+# Configuración de la base de datos
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost/dbname")
+
+# Motor asíncrono para PostgreSQL
+engine = create_engine(DATABASE_URL)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Base para los modelos
+Base = declarative_base()
+
+# Dependencia para obtener la sesión de la base de datos
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()`}
+                    language="python"
+                    id="sqlalchemy-config"
+                  />
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Modelos de Base de Datos</h3>
+                  <CodeBlock
+                    code={`from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from app.models.base import Base
+from app.core.database import Base
 
 class User(Base):
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), unique=True, index=True, nullable=False)
-    email = Column(String(100), unique=True, index=True, nullable=False)
-    full_name = Column(String(100))
-    hashed_password = Column(String(255), nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, unique=True, index=True, nullable=False)
+    full_name = Column(String)
+    hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # Relaciones
+    items = relationship("Item", back_populates="owner")
+    posts = relationship("Post", back_populates="author")
 
-# app/models/post.py
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey
-from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
-from app.models.base import Base
+class Item(Base):
+    __tablename__ = "items"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True, nullable=False)
+    description = Column(Text)
+    price = Column(Integer, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relaciones
+    owner = relationship("User", back_populates="items")
 
 class Post(Base):
     __tablename__ = "posts"
     
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(200), nullable=False)
-    content = Column(Text)
-    is_published = Column(Boolean, default=False)
+    title = Column(String, index=True, nullable=False)
+    content = Column(Text, nullable=False)
+    author_id = Column(Integer, ForeignKey("users.id"))
+    published = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
-    # Relación con User
-    owner_id = Column(Integer, ForeignKey("users.id"))
-    owner = relationship("User", back_populates="posts")`}
-                      />
-                    </div>
+    # Relaciones
+    author = relationship("User", back_populates="posts")
+    comments = relationship("Comment", back_populates="post")
 
+class Comment(Base):
+    __tablename__ = "comments"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(Text, nullable=False)
+    post_id = Column(Integer, ForeignKey("posts.id"))
+    author_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relaciones
+    post = relationship("Post", back_populates="comments")
+    author = relationship("User")`}
+                    language="python"
+                    id="database-models"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Operaciones CRUD</h3>
+                  <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Operaciones CRUD</h3>
+                      <h4 className="font-medium mb-2">CRUD Base</h4>
                       <CodeBlock
-                        id="crud-operations"
-                        code={`# app/crud/base.py
-from typing import Generic, TypeVar, Type, Optional, List
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+                        code={`from typing import Generic, TypeVar, Type, Optional, List
+from sqlalchemy.orm import Session
+from sqlalchemy import and_
 
-ModelType = TypeVar("ModelType")
+from app.core.database import Base
 
-class CRUDBase(Generic[ModelType]):
+ModelType = TypeVar("ModelType", bound=Base)
+CreateSchemaType = TypeVar("CreateSchemaType")
+UpdateSchemaType = TypeVar("UpdateSchemaType")
+
+class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
 
-    async def get(self, db: AsyncSession, id: int) -> Optional[ModelType]:
-        result = await db.execute(select(self.model).where(self.model.id == id))
-        return result.scalar_one_or_none()
+    def get(self, db: Session, id: int) -> Optional[ModelType]:
+        return db.query(self.model).filter(self.model.id == id).first()
 
-    async def get_multi(
-        self, db: AsyncSession, *, skip: int = 0, limit: int = 100
+    def get_multi(
+        self, db: Session, *, skip: int = 0, limit: int = 100
     ) -> List[ModelType]:
-        result = await db.execute(
-            select(self.model).offset(skip).limit(limit)
-        )
-        return result.scalars().all()
+        return db.query(self.model).offset(skip).limit(limit).all()
 
-    async def create(self, db: AsyncSession, *, obj_in: dict) -> ModelType:
-        obj = self.model(**obj_in)
-        db.add(obj)
-        await db.commit()
-        await db.refresh(obj)
-        return obj
-
-    async def update(
-        self, db: AsyncSession, *, db_obj: ModelType, obj_in: dict
-    ) -> ModelType:
-        for field, value in obj_in.items():
-            setattr(db_obj, field, value)
-        await db.commit()
-        await db.refresh(db_obj)
+    def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
+        obj_in_data = obj_in.dict()
+        db_obj = self.model(**obj_in_data)
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
         return db_obj
 
-    async def delete(self, db: AsyncSession, *, id: int) -> Optional[ModelType]:
-        obj = await self.get(db, id=id)
-        if obj:
-            await db.delete(obj)
-            await db.commit()
-        return obj
+    def update(
+        self, db: Session, *, db_obj: ModelType, obj_in: UpdateSchemaType
+    ) -> ModelType:
+        obj_data = db_obj.__dict__
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.dict(exclude_unset=True)
+        for field in obj_data:
+            if field in update_data:
+                setattr(db_obj, field, update_data[field])
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
 
-# app/crud/user.py
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+    def remove(self, db: Session, *, id: int) -> ModelType:
+        obj = db.query(self.model).get(id)
+        db.delete(obj)
+        db.commit()
+        return obj`}
+                        language="python"
+                        id="crud-base"
+                      />
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium mb-2">CRUD para Usuarios</h4>
+                      <CodeBlock
+                        code={`from typing import Any, Dict, Optional, Union
+from sqlalchemy.orm import Session
+from sqlalchemy import or_
+
+from app.core.security import get_password_hash, verify_password
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
 from app.crud.base import CRUDBase
-from app.core.security import get_password_hash
 
-class CRUDUser(CRUDBase[User]):
-    async def get_by_username(self, db: AsyncSession, username: str) -> Optional[User]:
-        result = await db.execute(select(User).where(User.username == username))
-        return result.scalar_one_or_none()
+class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
+    def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
+        return db.query(User).filter(User.email == email).first()
 
-    async def get_by_email(self, db: AsyncSession, email: str) -> Optional[User]:
-        result = await db.execute(select(User).where(User.email == email))
-        return result.scalar_one_or_none()
+    def get_by_username(self, db: Session, *, username: str) -> Optional[User]:
+        return db.query(User).filter(User.username == username).first()
 
-    async def create(self, db: AsyncSession, *, obj_in: UserCreate) -> User:
-        hashed_password = get_password_hash(obj_in.password)
+    def create(self, db: Session, *, obj_in: UserCreate) -> User:
         db_obj = User(
-            username=obj_in.username,
             email=obj_in.email,
+            username=obj_in.username,
+            hashed_password=get_password_hash(obj_in.password),
             full_name=obj_in.full_name,
-            hashed_password=hashed_password,
+            is_active=obj_in.is_active,
         )
         db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
+        db.commit()
+        db.refresh(db_obj)
         return db_obj
 
+    def update(
+        self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
+    ) -> User:
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.dict(exclude_unset=True)
+        if update_data.get("password"):
+            hashed_password = get_password_hash(update_data["password"])
+            del update_data["password"]
+            update_data["hashed_password"] = hashed_password
+        return super().update(db, db_obj=db_obj, obj_in=update_data)
+
+    def authenticate(self, db: Session, *, email: str, password: str) -> Optional[User]:
+        user = self.get_by_email(db, email=email)
+        if not user:
+            return None
+        if not verify_password(password, user.hashed_password):
+            return None
+        return user
+
+    def is_active(self, user: User) -> bool:
+        return user.is_active
+
+    def is_superuser(self, user: User) -> bool:
+        return user.is_superuser
+
+    def search_users(
+        self, db: Session, *, query: str, skip: int = 0, limit: int = 100
+    ) -> List[User]:
+        return (
+            db.query(User)
+            .filter(
+                or_(
+                    User.email.ilike(f"%{query}%"),
+                    User.username.ilike(f"%{query}%"),
+                    User.full_name.ilike(f"%{query}%"),
+                )
+            )
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
 user = CRUDUser(User)`}
+                        language="python"
+                        id="crud-user"
                       />
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Endpoints con Base de Datos</h3>
+                      <h4 className="font-medium mb-2">CRUD para Items</h4>
                       <CodeBlock
-                        id="db-endpoints"
-                        code={`# app/api/v1/endpoints/users.py
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+                        code={`from typing import List, Optional
+from sqlalchemy.orm import Session
+from sqlalchemy import and_, or_
+
+from app.models.item import Item
+from app.schemas.item import ItemCreate, ItemUpdate
+from app.crud.base import CRUDBase
+
+class CRUDItem(CRUDBase[Item, ItemCreate, ItemUpdate]):
+    def create_with_owner(
+        self, db: Session, *, obj_in: ItemCreate, owner_id: int
+    ) -> Item:
+        obj_in_data = obj_in.dict()
+        db_obj = Item(**obj_in_data, owner_id=owner_id)
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
+
+    def get_multi_by_owner(
+        self, db: Session, *, owner_id: int, skip: int = 0, limit: int = 100
+    ) -> List[Item]:
+        return (
+            db.query(Item)
+            .filter(Item.owner_id == owner_id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+
+    def search_items(
+        self,
+        db: Session,
+        *,
+        query: Optional[str] = None,
+        min_price: Optional[int] = None,
+        max_price: Optional[int] = None,
+        owner_id: Optional[int] = None,
+        skip: int = 0,
+        limit: int = 100,
+    ) -> List[Item]:
+        filters = []
+        
+        if query:
+            filters.append(
+                or_(
+                    Item.title.ilike(f"%{query}%"),
+                    Item.description.ilike(f"%{query}%"),
+                )
+            )
+        
+        if min_price is not None:
+            filters.append(Item.price >= min_price)
+        
+        if max_price is not None:
+            filters.append(Item.price <= max_price)
+        
+        if owner_id is not None:
+            filters.append(Item.owner_id == owner_id)
+        
+        query_obj = db.query(Item)
+        
+        if filters:
+            query_obj = query_obj.filter(and_(*filters))
+        
+        return query_obj.offset(skip).limit(limit).all()
+
+item = CRUDItem(Item)`}
+                        language="python"
+                        id="crud-item"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Endpoints con Base de Datos</h3>
+                  <CodeBlock
+                    code={`from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 from typing import List
 
-from app.db.session import get_db
-from app.schemas.user import User, UserCreate, UserUpdate
-from app.crud.user import user
+from app.core.database import get_db
+from app import crud, models, schemas
+from app.core.security import get_current_user
 
 router = APIRouter()
 
-@router.post("/", response_model=User)
-async def create_user(
+@router.post("/", response_model=schemas.Item)
+def create_item(
     *,
-    db: AsyncSession = Depends(get_db),
-    user_in: UserCreate
+    db: Session = Depends(get_db),
+    item_in: schemas.ItemCreate,
+    current_user: models.User = Depends(get_current_user)
 ):
-    # Verificar si el usuario ya existe
-    db_user = await user.get_by_email(db, email=user_in.email)
-    if db_user:
-        raise HTTPException(
-            status_code=400,
-            detail="Email ya registrado"
-        )
-    return await user.create(db, obj_in=user_in.model_dump())
+    """
+    Crear un nuevo item.
+    """
+    item = crud.item.create_with_owner(
+        db=db, obj_in=item_in, owner_id=current_user.id
+    )
+    return item
 
-@router.get("/", response_model=List[User])
-async def read_users(
-    db: AsyncSession = Depends(get_db),
+@router.get("/", response_model=List[schemas.Item])
+def read_items(
+    db: Session = Depends(get_db),
     skip: int = 0,
-    limit: int = 100
+    limit: int = 100,
+    current_user: models.User = Depends(get_current_user)
 ):
-    users = await user.get_multi(db, skip=skip, limit=limit)
-    return users
+    """
+    Obtener items del usuario actual.
+    """
+    items = crud.item.get_multi_by_owner(
+        db=db, owner_id=current_user.id, skip=skip, limit=limit
+    )
+    return items
 
-@router.get("/{user_id}", response_model=User)
-async def read_user(
-    user_id: int,
-    db: AsyncSession = Depends(get_db)
-):
-    db_user = await user.get(db, id=user_id)
-    if not db_user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return db_user
-
-@router.put("/{user_id}", response_model=User)
-async def update_user(
+@router.get("/{item_id}", response_model=schemas.Item)
+def read_item(
     *,
-    db: AsyncSession = Depends(get_db),
-    user_id: int,
-    user_in: UserUpdate
+    db: Session = Depends(get_db),
+    item_id: int,
+    current_user: models.User = Depends(get_current_user)
 ):
-    db_user = await user.get(db, id=user_id)
-    if not db_user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return await user.update(db, db_obj=db_user, obj_in=user_in.model_dump(exclude_unset=True))
+    """
+    Obtener un item específico por ID.
+    """
+    item = crud.item.get(db=db, id=item_id)
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item no encontrado"
+        )
+    if item.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permiso para acceder a este item"
+        )
+    return item
 
-@router.delete("/{user_id}")
-async def delete_user(
-    user_id: int,
-    db: AsyncSession = Depends(get_db)
+@router.put("/{item_id}", response_model=schemas.Item)
+def update_item(
+    *,
+    db: Session = Depends(get_db),
+    item_id: int,
+    item_in: schemas.ItemUpdate,
+    current_user: models.User = Depends(get_current_user)
 ):
-    db_user = await user.delete(db, id=user_id)
-    if not db_user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return {"message": "Usuario eliminado exitosamente"}`}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+    """
+    Actualizar un item.
+    """
+    item = crud.item.get(db=db, id=item_id)
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item no encontrado"
+        )
+    if item.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permiso para actualizar este item"
+        )
+    item = crud.item.update(db=db, db_obj=item, obj_in=item_in)
+    return item
 
-              {/* Documentation Section */}
-              {activeSection === 'documentation' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <TestTube className="h-6 w-6" />
-                      7. Documentación y pruebas
-                    </CardTitle>
-                    <CardDescription>
-                      Documentación automática y estrategias de testing en FastAPI
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <p className="text-foreground leading-relaxed">
-                      FastAPI genera documentación automática basada en tus endpoints y modelos Pydantic. 
-                      Además, proporciona excelentes herramientas para testing de tus APIs.
-                    </p>
+@router.delete("/{item_id}", response_model=schemas.Item)
+def delete_item(
+    *,
+    db: Session = Depends(get_db),
+    item_id: int,
+    current_user: models.User = Depends(get_current_user)
+):
+    """
+    Eliminar un item.
+    """
+    item = crud.item.get(db=db, id=item_id)
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item no encontrado"
+        )
+    if item.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes permiso para eliminar este item"
+        )
+    item = crud.item.remove(db=db, id=item_id)
+    return item
 
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Documentación Automática</h3>
-                      <p className="text-muted-foreground mb-4">
-                        FastAPI genera automáticamente dos interfaces de documentación:
-                      </p>
-                      <div className="grid md:grid-cols-2 gap-4 mb-4">
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">Swagger UI</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm mb-2">
-                              Interactiva, permite probar endpoints directamente desde el navegador.
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Disponible en: <code>/docs</code>
-                            </p>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">ReDoc</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm mb-2">
-                              Documentación limpia, ideal para referencia y documentación pública.
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Disponible en: <code>/redoc</code>
-                            </p>
-                          </CardContent>
-                        </Card>
-                      </div>
-                      <CodeBlock
-                        id="custom-docs"
-                        code={`from fastapi import FastAPI
+@router.get("/search/", response_model=List[schemas.Item])
+def search_items(
+    *,
+    db: Session = Depends(get_db),
+    query: str = None,
+    min_price: int = None,
+    max_price: int = None,
+    skip: int = 0,
+    limit: int = 100,
+    current_user: models.User = Depends(get_current_user)
+):
+    """
+    Buscar items con filtros.
+    """
+    items = crud.item.search_items(
+        db=db,
+        query=query,
+        min_price=min_price,
+        max_price=max_price,
+        owner_id=current_user.id,
+        skip=skip,
+        limit=limit
+    )
+    return items`}
+                    language="python"
+                    id="db-endpoints"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Migraciones con Alembic</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Instala Alembic y configura las migraciones:
+                  </p>
+                  <CodeBlock
+                    code={`# Instalar alembic
+pip install alembic
+
+# Inicializar alembic
+alembic init alembic
+
+# Configurar alembic.ini
+# Editar el archivo alembic.ini y cambiar la URL de la base de datos
+sqlalchemy.url = postgresql://user:password@localhost/dbname
+
+# Configurar env.py
+# En alembic/env.py, importar tus modelos y Base
+from app.models import Base
+from app.core.database import DATABASE_URL
+
+# Configurar target_metadata
+target_metadata = Base.metadata
+
+# Crear una migración
+alembic revision --autogenerate -m "Add users table"
+
+# Aplicar migraciones
+alembic upgrade head
+
+# Revertir migración
+alembic downgrade -1`}
+                    language="bash"
+                    id="alembic-setup"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* 7. Documentación y Pruebas */}
+          <TabsContent value="documentacion">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span>7. Documentación y Pruebas</span>
+                  <Badge variant="secondary">Testing y Docs</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Aprende a generar documentación automática y escribir pruebas para tu API
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Documentación Automática</h3>
+                  <p className="text-muted-foreground mb-4">
+                    FastAPI genera automáticamente documentación interactiva:
+                  </p>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Swagger UI</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <p className="text-xs text-muted-foreground mb-2">
+                          Documentación interactiva en <code>/docs</code>
+                        </p>
+                        <ul className="text-xs text-muted-foreground space-y-1">
+                          <li>• Interfaz amigable</li>
+                          <li>• Prueba endpoints directamente</li>
+                          <li>• Soporte para autenticación</li>
+                          <li>• Ejemplos de solicitud/respuesta</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">ReDoc</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <p className="text-xs text-muted-foreground mb-2">
+                          Documentación alternativa en <code>/redoc</code>
+                        </p>
+                        <ul className="text-xs text-muted-foreground space-y-1">
+                          <li>• Diseño limpio y profesional</li>
+                          <li>• Mejor para documentación larga</li>
+                          <li>• Búsqueda integrada</li>
+                          <li>• Exportación a PDF</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Personalización de Documentación</h3>
+                  <CodeBlock
+                    code={`from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
 app = FastAPI(
     title="Mi API FastAPI",
-    description="Esta es una API de ejemplo",
+    description="Una API increíble construida con FastAPI",
     version="1.0.0",
-    docs_url="/docs",  # URL personalizable para Swagger UI
-    redoc_url="/redoc"  # URL personalizable para ReDoc
+    terms_of_service="https://example.com/terms/",
+    contact={
+        "name": "API Support",
+        "url": "https://example.com/support",
+        "email": "support@example.com",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT",
+    },
+    openapi_tags=[
+        {
+            "name": "users",
+            "description": "Operaciones con usuarios",
+            "externalDocs": {
+                "description": "Documentación externa de usuarios",
+                "url": "https://example.com/docs/users",
+            },
+        },
+        {
+            "name": "items",
+            "description": "Operaciones con items",
+        },
+        {
+            "name": "admin",
+            "description": "Operaciones de administrador",
+            "externalDocs": {
+                "description": "Guía de administrador",
+                "url": "https://example.com/docs/admin",
+            },
+        },
+    ],
 )
 
-# Personalizar la documentación OpenAPI
+# Personalizar OpenAPI schema
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
     
     openapi_schema = get_openapi(
-        title="Mi API FastAPI",
+        title="Mi API Personalizada",
         version="1.0.0",
-        description="API de ejemplo con documentación personalizada",
+        description="Esta es una descripción personalizada",
         routes=app.routes,
     )
     
-    # Personalizar información adicional
+    # Añadir información adicional
     openapi_schema["info"]["x-logo"] = {
         "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
     }
     
-    # Agregar servidores
-    openapi_schema["servers"] = [
-        {
-            "url": "https://api.example.com/v1",
-            "description": "Producción"
-        },
-        {
-            "url": "http://localhost:8000",
-            "description": "Desarrollo"
+    # Personalizar componentes
+    openapi_schema["components"]["securitySchemes"] = {
+        "bearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
         }
-    ]
+    }
+    
+    # Añadir seguridad global
+    openapi_schema["security"] = [{"bearerAuth": []}]
     
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
-app.openapi = custom_openapi`}
-                      />
-                    </div>
+app.openapi = custom_openapi
 
+# Ejemplo de endpoint con documentación personalizada
+@app.post(
+    "/users/",
+    tags=["users"],
+    summary="Crear un nuevo usuario",
+    description="Crea un nuevo usuario en el sistema. El email debe ser único.",
+    response_description="Usuario creado exitosamente",
+    responses={
+        201: {
+            "description": "Usuario creado exitosamente",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": 1,
+                        "email": "user@example.com",
+                        "username": "testuser",
+                        "is_active": True
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Email ya existe",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "El email ya está registrado"
+                    }
+                }
+            }
+        }
+    }
+)
+async def create_user(user: UserCreate):
+    # Lógica para crear usuario
+    return user`}
+                    language="python"
+                    id="custom-docs"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Pruebas con Pytest</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Instala las dependencias para testing:
+                  </p>
+                  <CodeBlock
+                    code="pip install pytest pytest-asyncio httpx"
+                    language="bash"
+                    id="install-pytest"
+                  />
+                  
+                  <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Testing con pytest</h3>
+                      <h4 className="font-medium mb-2">Configuración de Pruebas</h4>
                       <CodeBlock
-                        id="pytest-setup"
-                        code={`# requirements.txt (agregar dependencias de testing)
-pytest==7.4.3
-pytest-asyncio==0.21.1
-httpx==0.25.2
-
-# tests/conftest.py
+                        code={`# tests/conftest.py
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -1258,11 +2097,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.main import app
-from app.db.base import Base
-from app.db.session import get_db
+from app.core.database import get_db
+from app.models import Base
 
 # Base de datos de prueba en memoria
-SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+SQLALCHEMY_DATABASE_URL = "sqlite://"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
@@ -1271,275 +2110,583 @@ engine = create_engine(
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def override_get_db():
+@pytest.fixture(scope="function")
+def db():
+    Base.metadata.create_all(bind=engine)
     try:
         db = TestingSessionLocal()
         yield db
     finally:
         db.close()
+        Base.metadata.drop_all(bind=engine)
 
-app.dependency_overrides[get_db] = override_get_db
-
-@pytest.fixture
-def client():
-    Base.metadata.create_all(bind=engine)
+@pytest.fixture(scope="function")
+def client(db):
+    def override_get_db():
+        try:
+            yield db
+        finally:
+            db.close()
+    
+    app.dependency_overrides[get_db] = override_get_db
+    
     with TestClient(app) as c:
         yield c
-    Base.metadata.drop_all(bind=engine)
-
-@pytest.fixture
-def test_user():
-    return {
-        "username": "testuser",
-        "email": "test@example.com",
-        "full_name": "Test User",
-        "password": "testpassword123"
-    }`}
+    
+    app.dependency_overrides.clear()`}
+                        language="python"
+                        id="pytest-config"
                       />
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Tests de API</h3>
+                      <h4 className="font-medium mb-2">Pruebas de API</h4>
                       <CodeBlock
-                        id="api-tests"
                         code={`# tests/test_api.py
 import pytest
 from fastapi.testclient import TestClient
 
-def test_read_main(client: TestClient):
+def test_read_root(client: TestClient):
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"Hello": "World"}
+    assert response.json() == {"message": "¡Hola, FastAPI!"}
 
-def test_create_user(client: TestClient, test_user):
-    response = client.post("/users/", json=test_user)
-    assert response.status_code == 200
+def test_create_user(client: TestClient):
+    user_data = {
+        "email": "test@example.com",
+        "username": "testuser",
+        "password": "testpass123",
+        "full_name": "Test User"
+    }
+    
+    response = client.post("/users/", json=user_data)
+    assert response.status_code == 201
     data = response.json()
-    assert data["username"] == test_user["username"]
-    assert data["email"] == test_user["email"]
+    assert data["email"] == user_data["email"]
+    assert data["username"] == user_data["username"]
     assert "id" in data
     assert data["is_active"] is True
 
-def test_read_user(client: TestClient, test_user):
-    # Primero crear un usuario
-    create_response = client.post("/users/", json=test_user)
+def test_create_user_duplicate_email(client: TestClient):
+    user_data = {
+        "email": "duplicate@example.com",
+        "username": "user1",
+        "password": "pass123",
+        "full_name": "User One"
+    }
+    
+    # Crear primer usuario
+    response = client.post("/users/", json=user_data)
+    assert response.status_code == 201
+    
+    # Intentar crear usuario con mismo email
+    response = client.post("/users/", json=user_data)
+    assert response.status_code == 400
+    assert "Email ya registrado" in response.json()["detail"]
+
+def test_get_user(client: TestClient):
+    # Crear usuario primero
+    user_data = {
+        "email": "get@example.com",
+        "username": "getuser",
+        "password": "pass123",
+        "full_name": "Get User"
+    }
+    create_response = client.post("/users/", json=user_data)
     user_id = create_response.json()["id"]
     
-    # Luego leer el usuario
+    # Obtener usuario
     response = client.get(f"/users/{user_id}")
     assert response.status_code == 200
     data = response.json()
-    assert data["username"] == test_user["username"]
+    assert data["id"] == user_id
+    assert data["email"] == user_data["email"]
 
-def test_read_users(client: TestClient, test_user):
-    # Crear algunos usuarios
-    client.post("/users/", json=test_user)
-    client.post("/users/", json={
-        **test_user,
-        "username": "testuser2",
-        "email": "test2@example.com"
-    })
-    
-    response = client.get("/users/")
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data) >= 2
+def test_get_nonexistent_user(client: TestClient):
+    response = client.get("/users/999")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Usuario no encontrado"
 
-def test_update_user(client: TestClient, test_user):
-    # Crear usuario
-    create_response = client.post("/users/", json=test_user)
+def test_update_user(client: TestClient):
+    # Crear usuario primero
+    user_data = {
+        "email": "update@example.com",
+        "username": "updateuser",
+        "password": "pass123",
+        "full_name": "Update User"
+    }
+    create_response = client.post("/users/", json=user_data)
     user_id = create_response.json()["id"]
     
     # Actualizar usuario
-    update_data = {"full_name": "Updated Name"}
+    update_data = {
+        "full_name": "Updated Name",
+        "username": "updateduser"
+    }
     response = client.put(f"/users/{user_id}", json=update_data)
     assert response.status_code == 200
     data = response.json()
-    assert data["full_name"] == "Updated Name"
+    assert data["full_name"] == update_data["full_name"]
+    assert data["username"] == update_data["username"]
+    assert data["email"] == user_data["email"]  # No debe cambiar
 
-def test_delete_user(client: TestClient, test_user):
-    # Crear usuario
-    create_response = client.post("/users/", json=test_user)
+def test_delete_user(client: TestClient):
+    # Crear usuario primero
+    user_data = {
+        "email": "delete@example.com",
+        "username": "deleteuser",
+        "password": "pass123",
+        "full_name": "Delete User"
+    }
+    create_response = client.post("/users/", json=user_data)
     user_id = create_response.json()["id"]
     
     # Eliminar usuario
     response = client.delete(f"/users/{user_id}")
     assert response.status_code == 200
     
-    # Verificar que el usuario ya no existe
-    get_response = client.get(f"/users/{user_id}")
-    assert get_response.status_code == 404`}
+    # Verificar que el usuario fue eliminado
+    response = client.get(f"/users/{user_id}")
+    assert response.status_code == 404`}
+                        language="python"
+                        id="api-tests"
                       />
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Testing Asíncrono</h3>
+                      <h4 className="font-medium mb-2">Pruebas con Autenticación</h4>
                       <CodeBlock
-                        id="async-tests"
-                        code={`# tests/test_async.py
+                        code={`# tests/test_auth.py
 import pytest
-from httpx import AsyncClient
-from app.main import app
+from fastapi.testclient import TestClient
 
-@pytest.mark.asyncio
-async def test_async_create_user():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await ac.post(
-            "/users/",
-            json={
-                "username": "asyncuser",
-                "email": "async@example.com",
-                "full_name": "Async User",
-                "password": "asyncpassword123"
-            }
-        )
+def test_login(client: TestClient):
+    # Crear usuario primero
+    user_data = {
+        "email": "login@example.com",
+        "username": "loginuser",
+        "password": "pass123",
+        "full_name": "Login User"
+    }
+    client.post("/users/", json=user_data)
+    
+    # Iniciar sesión
+    login_data = {
+        "username": "login@example.com",
+        "password": "pass123"
+    }
+    response = client.post("/token", data=login_data)
     assert response.status_code == 200
     data = response.json()
-    assert data["username"] == "asyncuser"
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
 
-@pytest.mark.asyncio
-async def test_async_read_users():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await ac.get("/users/")
+def test_protected_route_without_token(client: TestClient):
+    response = client.get("/users/me")
+    assert response.status_code == 401
+
+def test_protected_route_with_token(client: TestClient):
+    # Crear usuario e iniciar sesión
+    user_data = {
+        "email": "protected@example.com",
+        "username": "protecteduser",
+        "password": "pass123",
+        "full_name": "Protected User"
+    }
+    client.post("/users/", json=user_data)
+    
+    login_data = {
+        "username": "protected@example.com",
+        "password": "pass123"
+    }
+    login_response = client.post("/token", data=login_data)
+    token = login_response.json()["access_token"]
+    
+    # Acceder a ruta protegida
+    headers = {"Authorization": f"Bearer {token}"}
+    response = client.get("/users/me", headers=headers)
     assert response.status_code == 200
-    assert isinstance(response.json(), list)
+    data = response.json()
+    assert data["email"] == user_data["email"]
 
-# Tests de rendimiento
-@pytest.mark.asyncio
-async def test_performance():
-    import time
-    start_time = time.time()
+@pytest.fixture
+def auth_headers(client: TestClient):
+    # Crear usuario e iniciar sesión
+    user_data = {
+        "email": "auth@example.com",
+        "username": "authuser",
+        "password": "pass123",
+        "full_name": "Auth User"
+    }
+    client.post("/users/", json=user_data)
     
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        # Realizar múltiples peticiones concurrentes
-        tasks = []
-        for i in range(10):
-            task = ac.get("/users/")
-            tasks.append(task)
-        
-        responses = await asyncio.gather(*tasks)
-        
-        for response in responses:
-            assert response.status_code == 200
+    login_data = {
+        "username": "auth@example.com",
+        "password": "pass123"
+    }
+    login_response = client.post("/token", data=login_data)
+    token = login_response.json()["access_token"]
     
-    end_time = time.time()
-    assert end_time - start_time < 5.0  # Debe completarse en menos de 5 segundos`}
+    return {"Authorization": f"Bearer {token}"}
+
+def test_create_item_with_auth(client: TestClient, auth_headers):
+    item_data = {
+        "title": "Test Item",
+        "description": "A test item",
+        "price": 99.99
+    }
+    
+    response = client.post("/items/", json=item_data, headers=auth_headers)
+    assert response.status_code == 201
+    data = response.json()
+    assert data["title"] == item_data["title"]
+    assert data["price"] == item_data["price"]`}
+                        language="python"
+                        id="auth-tests"
                       />
                     </div>
-                  </CardContent>
-                </Card>
-              )}
+                  </div>
+                </div>
 
-              {/* Deployment Section */}
-              {activeSection === 'deployment' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Upload className="h-6 w-6" />
-                      8. Despliegue
-                    </CardTitle>
-                    <CardDescription>
-                      Opciones de despliegue y mejores prácticas para producción
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <p className="text-foreground leading-relaxed">
-                      Desplegar una aplicación FastAPI en producción requiere considerar varios 
-                      factores como rendimiento, seguridad, escalabilidad y mantenibilidad.
-                    </p>
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Pruebas de Integración</h3>
+                  <CodeBlock
+                    code={`# tests/test_integration.py
+import pytest
+from fastapi.testclient import TestClient
 
+def test_full_user_item_workflow(client: TestClient):
+    """Prueba completa del flujo de usuario y items"""
+    
+    # 1. Crear usuario
+    user_data = {
+        "email": "workflow@example.com",
+        "username": "workflowuser",
+        "password": "pass123",
+        "full_name": "Workflow User"
+    }
+    user_response = client.post("/users/", json=user_data)
+    assert user_response.status_code == 201
+    user_id = user_response.json()["id"]
+    
+    # 2. Iniciar sesión
+    login_data = {
+        "username": "workflow@example.com",
+        "password": "pass123"
+    }
+    login_response = client.post("/token", data=login_data)
+    assert login_response.status_code == 200
+    token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    # 3. Crear varios items
+    items_data = [
+        {"title": "Item 1", "description": "First item", "price": 10.99},
+        {"title": "Item 2", "description": "Second item", "price": 20.99},
+        {"title": "Item 3", "description": "Third item", "price": 30.99}
+    ]
+    
+    created_items = []
+    for item_data in items_data:
+        response = client.post("/items/", json=item_data, headers=headers)
+        assert response.status_code == 201
+        created_items.append(response.json())
+    
+    # 4. Obtener todos los items del usuario
+    response = client.get("/items/", headers=headers)
+    assert response.status_code == 200
+    user_items = response.json()
+    assert len(user_items) == 3
+    
+    # 5. Actualizar un item
+    item_id = created_items[0]["id"]
+    update_data = {"title": "Updated Item", "price": 15.99}
+    response = client.put(f"/items/{item_id}", json=update_data, headers=headers)
+    assert response.status_code == 200
+    updated_item = response.json()
+    assert updated_item["title"] == "Updated Item"
+    assert updated_item["price"] == 15.99
+    
+    # 6. Buscar items
+    response = client.get("/items/search/?query=item", headers=headers)
+    assert response.status_code == 200
+    search_results = response.json()
+    assert len(search_results) >= 1
+    
+    # 7. Eliminar un item
+    response = client.delete(f"/items/{item_id}", headers=headers)
+    assert response.status_code == 200
+    
+    # 8. Verificar que el item fue eliminado
+    response = client.get(f"/items/{item_id}", headers=headers)
+    assert response.status_code == 404
+    
+    # 9. Verificar que los items restantes siguen ahí
+    response = client.get("/items/", headers=headers)
+    assert response.status_code == 200
+    remaining_items = response.json()
+    assert len(remaining_items) == 2
+
+def test_error_handling(client: TestClient):
+    """Prueba el manejo de errores en diferentes escenarios"""
+    
+    # Probar crear usuario con datos inválidos
+    invalid_user = {
+        "email": "invalid-email",
+        "username": "",  # Username vacío
+        "password": "123"  # Contraseña muy corta
+    }
+    response = client.post("/users/", json=invalid_user)
+    assert response.status_code == 422
+    
+    # Probar acceder a usuario inexistente
+    response = client.get("/users/999")
+    assert response.status_code == 404
+    
+    # Probar crear item sin autenticación
+    item_data = {"title": "Test Item", "price": 10.99}
+    response = client.post("/items/", json=item_data)
+    assert response.status_code == 401
+    
+    # Probar crear item con datos inválidos
+    user_data = {
+        "email": "error@example.com",
+        "username": "erroruser",
+        "password": "pass123",
+        "full_name": "Error User"
+    }
+    client.post("/users/", json=user_data)
+    
+    login_data = {
+        "username": "error@example.com",
+        "password": "pass123"
+    }
+    login_response = client.post("/token", data=login_data)
+    token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    invalid_item = {"title": "", "price": -10}  # Datos inválidos
+    response = client.post("/items/", json=invalid_item, headers=headers)
+    assert response.status_code == 422`}
+                    language="python"
+                    id="integration-tests"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Ejecutar Pruebas</h3>
+                  <CodeBlock
+                    code={`# Ejecutar todas las pruebas
+pytest
+
+# Ejecutar pruebas con cobertura
+pytest --cov=app --cov-report=html
+
+# Ejecutar pruebas con verbosidad
+pytest -v
+
+# Ejecutar pruebas específicas
+pytest tests/test_api.py::test_create_user
+
+# Ejecutar pruebas con marcadores
+pytest -m "not slow"
+
+# Ver reporte de cobertura
+open htmlcov/index.html
+
+# Ejecutar pruebas en paralelo
+pip install pytest-xdist
+pytest -n auto
+
+# Generar reporte de pruebas
+pytest --html=report.html`}
+                    language="bash"
+                    id="run-tests"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* 8. Despliegue */}
+          <TabsContent value="despliegue">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span>8. Despliegue</span>
+                  <Badge variant="secondary">Producción</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Aprende a desplegar tu aplicación FastAPI en diferentes entornos
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Preparación para Producción</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Configuración de Producción</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <ul className="text-xs text-muted-foreground space-y-1">
+                          <li>• Desactivar modo debug</li>
+                          <li>• Configurar variables de entorno</li>
+                          <li>• Usar servidor de producción</li>
+                          <li>• Configurar HTTPS</li>
+                          <li>• Establecer logging adecuado</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Buenas Prácticas</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <ul className="text-xs text-muted-foreground space-y-1">
+                          <li>• Usar .env para variables</li>
+                          <li>• Implementar CORS</li>
+                          <li>• Configurar rate limiting</li>
+                          <li>• Usar reverse proxy</li>
+                          <li>• Monitorear la aplicación</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Configuración de Producción</h3>
+                  <CodeBlock
+                    code={`# app/core/config.py
+from pydantic import BaseSettings, Field
+from typing import Optional
+
+class Settings(BaseSettings):
+    # Configuración básica
+    PROJECT_NAME: str = "Mi API FastAPI"
+    VERSION: str = "1.0.0"
+    DEBUG: bool = Field(False, env="DEBUG")
+    
+    # API
+    API_V1_STR: str = "/api/v1"
+    
+    # Base de datos
+    DATABASE_URL: str = Field(..., env="DATABASE_URL")
+    
+    # Seguridad
+    SECRET_KEY: str = Field(..., env="SECRET_KEY")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(30, env="ACCESS_TOKEN_EXPIRE_MINUTES")
+    ALGORITHM: str = "HS256"
+    
+    # CORS
+    BACKEND_CORS_ORIGINS: list[str] = Field(
+        ["http://localhost:3000", "http://localhost:8000"],
+        env="BACKEND_CORS_ORIGINS"
+    )
+    
+    # Logging
+    LOG_LEVEL: str = Field("INFO", env="LOG_LEVEL")
+    
+    # Servidor
+    HOST: str = Field("0.0.0.0", env="HOST")
+    PORT: int = Field(8000, env="PORT")
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+settings = Settings()
+
+# app/main.py
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+import logging
+from app.core.config import settings
+
+# Configurar logging
+logging.basicConfig(
+    level=getattr(logging, settings.LOG_LEVEL),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    debug=settings.DEBUG,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    if not settings.DEBUG else None,
+)
+
+# Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["*"]  # Configurar según tu dominio
+)
+
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "version": settings.VERSION}`}
+                    language="python"
+                    id="production-config"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Despliegue con Docker</h3>
+                  <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Opciones de Despliegue</h3>
-                      <div className="grid md:grid-cols-2 gap-4 mb-6">
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">Docker + Uvicorn</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm mb-2">
-                              La opción más común y flexible. Contenedoriza tu aplicación 
-                              para consistencia entre entornos.
-                            </p>
-                            <ul className="text-xs space-y-1">
-                              <li>• Portabilidad entre sistemas</li>
-                              <li>• Fácil escalado horizontal</li>
-                              <li>• Aislamiento de dependencias</li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">Cloud Platforms</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm mb-2">
-                              Plataformas como Render, Railway, Heroku simplifican el despliegue.
-                            </p>
-                            <ul className="text-xs space-y-1">
-                              <li>• Despliegue con Git push</li>
-                              <li>• Escalado automático</li>
-                              <li>• Monitoreo integrado</li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Dockerfile para FastAPI</h3>
+                      <h4 className="font-medium mb-2">Dockerfile</h4>
                       <CodeBlock
-                        id="dockerfile"
-                        code={`# Dockerfile multi-stage para optimización
-FROM python:3.11-slim as builder
+                        code={`# Dockerfile
+FROM python:3.11-slim
+
+# Establecer el directorio de trabajo
+WORKDIR /app
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \\
-    gcc \\
+    build-essential \\
     && rm -rf /var/lib/apt/lists/*
 
-# Establecer directorio de trabajo
-WORKDIR /app
-
-# Copiar requirements primero para caché de Docker
+# Copiar requirements y instalar dependencias de Python
 COPY requirements.txt .
-
-# Instalar dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Etapa de producción
-FROM python:3.11-slim
-
-# Instalar dependencias del sistema necesarias
-RUN apt-get update && apt-get install -y \\
-    curl \\
-    && rm -rf /var/lib/apt/lists/*
+# Copiar código de la aplicación
+COPY . .
 
 # Crear usuario no root
-RUN useradd --create-home --shell /bin/bash app
-WORKDIR /home/app
-
-# Copiar dependencias de la etapa builder
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
-
-# Copiar aplicación
-COPY --chown=app:app . .
-
-# Cambiar a usuario no root
-USER app
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
 
 # Exponer puerto
 EXPOSE 8000
 
 # Comando para ejecutar la aplicación
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`}
+                        language="docker"
+                        id="dockerfile"
                       />
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">docker-compose.yml</h3>
+                      <h4 className="font-medium mb-2">docker-compose.yml</h4>
                       <CodeBlock
-                        id="docker-compose"
                         code={`version: '3.8'
 
 services:
@@ -1548,165 +2695,141 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://fastapi_user:fastapi_password@db:5432/fastapi_db
-      - SECRET_KEY=your-secret-key-change-in-production
+      - DATABASE_URL=postgresql://user:password@db:5432/mydb
+      - SECRET_KEY=your-secret-key-here
+      - DEBUG=False
     depends_on:
       - db
+      - redis
     volumes:
-      - ./app:/home/app/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      - ./app:/app
+    restart: unless-stopped
 
   db:
     image: postgres:15
     environment:
-      - POSTGRES_USER=fastapi_user
-      - POSTGRES_PASSWORD=fastapi_password
-      - POSTGRES_DB=fastapi_db
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - app
+    restart: unless-stopped
 
 volumes:
   postgres_data:`}
+                        language="yaml"
+                        id="docker-compose"
                       />
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Configuración de Producción</h3>
+                      <h4 className="font-medium mb-2">nginx.conf</h4>
                       <CodeBlock
-                        id="production-config"
-                        code={`# app/core/config.py
-from pydantic_settings import BaseSettings
+                        code={`events {
+    worker_connections 1024;
+}
 
-class Settings(BaseSettings):
-    # Configuración de la aplicación
-    app_name: str = "FastAPI Production"
-    debug: bool = False
-    version: str = "1.0.0"
-    
-    # Base de datos
-    database_url: str
-    
-    # Seguridad
-    secret_key: str
-    algorithm: str = "HS256"
-    access_token_expire_minutes: int = 30
-    
-    # CORS
-    backend_cors_origins: list[str] = ["http://localhost:3000", "https://yourdomain.com"]
-    
-    # Logging
-    log_level: str = "INFO"
-    
-    # Performance
-    workers: int = 4
-    limit_concurrency: int = 1000
-    timeout_keep_alive: int = 5
-    
-    class Config:
-        env_file = ".env.production"
+http {
+    upstream app {
+        server app:8000;
+    }
 
-settings = Settings()
+    # HTTP redirect to HTTPS
+    server {
+        listen 80;
+        server_name yourdomain.com www.yourdomain.com;
+        return 301 https://$server_name$request_uri;
+    }
 
-# app/main.py
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
-from app.core.config import settings
+    # HTTPS server
+    server {
+        listen 443 ssl http2;
+        server_name yourdomain.com www.yourdomain.com;
 
-app = FastAPI(
-    title=settings.app_name,
-    version=settings.version,
-    debug=settings.debug
-)
+        # SSL configuration
+        ssl_certificate /etc/nginx/ssl/cert.pem;
+        ssl_certificate_key /etc/nginx/ssl/key.pem;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers HIGH:!aNULL:!MD5;
 
-# Middleware CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.backend_cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+        # Security headers
+        add_header X-Frame-Options DENY;
+        add_header X-Content-Type-Options nosniff;
+        add_header X-XSS-Protection "1; mode=block";
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
-# Middleware GZip
-app.add_middleware(GZipMiddleware, minimum_size=1000)`}
+        # Rate limiting
+        limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+        limit_req zone=api burst=20 nodelay;
+
+        # Proxy to FastAPI app
+        location / {
+            proxy_pass http://app;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            
+            # Timeouts
+            proxy_connect_timeout 30s;
+            proxy_send_timeout 30s;
+            proxy_read_timeout 30s;
+        }
+
+        # Static files (if any)
+        location /static/ {
+            alias /app/static/;
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+        }
+
+        # Health check
+        location /health {
+            access_log off;
+            proxy_pass http://app/health;
+        }
+    }
+}`}
+                        language="nginx"
+                        id="nginx-config"
                       />
                     </div>
+                  </div>
+                </div>
 
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Mejores Prácticas de Producción</h3>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">Seguridad</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <ul className="text-sm space-y-1">
-                              <li>• Usar HTTPS siempre</li>
-                              <li>• Variables de entorno para secrets</li>
-                              <li>• Validar y sanitizar entradas</li>
-                              <li>• Implementar rate limiting</li>
-                              <li>• Usar usuarios no root</li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">Rendimiento</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <ul className="text-sm space-y-1">
-                              <li>• Usar múltiples workers</li>
-                              <li>• Implementar caché (Redis)</li>
-                              <li>• Optimizar consultas a BD</li>
-                              <li>• Usar connection pooling</li>
-                              <li>• Monitorear métricas</li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">Monitoreo</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <ul className="text-sm space-y-1">
-                              <li>• Logs estructurados</li>
-                              <li>• Métricas con Prometheus</li>
-                              <li>• Health checks</li>
-                              <li>• Alertas configuradas</li>
-                              <li>• Backup automático</li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">Escalabilidad</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <ul className="text-sm space-y-1">
-                              <li>• Diseño stateless</li>
-                              <li>• Balanceo de carga</li>
-                              <li>• Escalado horizontal</li>
-                              <li>• Base de datos escalable</li>
-                              <li>• CDN para assets</li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Ejemplo de Despliegue en Render</h3>
-                      <CodeBlock
-                        id="render-deploy"
-                        code={`# render.yaml
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Plataformas de Despliegue</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Render</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <p className="text-xs text-muted-foreground mb-2">
+                          Plataforma cloud fácil de usar
+                        </p>
+                        <CodeBlock
+                            code={`# render.yaml
 services:
   - type: web
     name: fastapi-app
@@ -1725,217 +2848,371 @@ services:
 
 databases:
   - name: fastapi-db
-    databaseName: fastapi
-    user: fastapi_user
+    databaseName: mydb
+    user: fastapi`}
+                            language="yaml"
+                            id="render-config"
+                        />
+                      </CardContent>
+                    </Card>
 
-# .env
-DATABASE_URL=postgresql://fastapi_user:password@localhost:5432/fastapi_db
-SECRET_KEY=your-secret-key-here
-DEBUG=false`}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Railway</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <p className="text-xs text-muted-foreground mb-2">
+                          Despliegue simple con Git
+                        </p>
+                        <CodeBlock
+                            code={`# railway.toml
+[build]
+command = "pip install -r requirements.txt"
 
-              {/* API Playground Section */}
-              {activeSection === 'playground' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Play className="h-6 w-6" />
-                      API Playground
-                    </CardTitle>
-                    <CardDescription>
-                      Prueba endpoints de FastAPI directamente desde aquí
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-base">Request</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <div>
-                            <Label htmlFor="method">Método HTTP</Label>
-                            <Select value={apiRequest.method} onValueChange={(value) => setApiRequest({...apiRequest, method: value})}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="GET">GET</SelectItem>
-                                <SelectItem value="POST">POST</SelectItem>
-                                <SelectItem value="PUT">PUT</SelectItem>
-                                <SelectItem value="DELETE">DELETE</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          
-                          <div>
-                            <Label htmlFor="endpoint">Endpoint</Label>
-                            <Input
-                              id="endpoint"
-                              placeholder="/items/1"
-                              value={apiRequest.endpoint}
-                              onChange={(e) => setApiRequest({...apiRequest, endpoint: e.target.value})}
-                            />
-                          </div>
-                          
-                          {(apiRequest.method === 'POST' || apiRequest.method === 'PUT') && (
-                            <div>
-                              <Label htmlFor="body">Body (JSON)</Label>
-                              <Textarea
-                                id="body"
-                                placeholder='{"name": "example", "price": 10.99}'
-                                value={apiRequest.body}
-                                onChange={(e) => setApiRequest({...apiRequest, body: e.target.value})}
-                                rows={6}
-                              />
-                            </div>
-                          )}
-                          
-                          <Button onClick={() => {
-                            // Simulate API call
-                            setApiResponse(JSON.stringify({
-                              status: 200,
-                              data: {
-                                message: "Respuesta simulada",
-                                method: apiRequest.method,
-                                endpoint: apiRequest.endpoint,
-                                body: apiRequest.body ? JSON.parse(apiRequest.body) : null,
-                                timestamp: new Date().toISOString()
-                              }
-                            }, null, 2))
-                          }} className="w-full">
-                            Enviar Request
-                          </Button>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-base">Response</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          {apiResponse ? (
-                            <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
-                              <code>{apiResponse}</code>
-                            </pre>
-                          ) : (
-                            <p className="text-muted-foreground text-center py-8">
-                              Envía una request para ver la respuesta aquí
-                            </p>
-                          )}
-                        </CardContent>
-                      </Card>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Ejemplos de Endpoints</h3>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">GET /users</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm text-muted-foreground mb-2">
-                              Obtener lista de usuarios
-                            </p>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setApiRequest({method: 'GET', endpoint: '/users', body: ''})
-                                setApiResponse(JSON.stringify({
-                                  status: 200,
-                                  data: [
-                                    {id: 1, username: "alice", email: "alice@example.com"},
-                                    {id: 2, username: "bob", email: "bob@example.com"}
-                                  ]
-                                }, null, 2))
-                              }}
-                            >
-                              Probar
-                            </Button>
-                          </CardContent>
-                        </Card>
-                        
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="text-base">POST /users</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm text-muted-foreground mb-2">
-                              Crear nuevo usuario
-                            </p>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setApiRequest({
-                                  method: 'POST', 
-                                  endpoint: '/users', 
-                                  body: '{"username": "newuser", "email": "new@example.com", "password": "secret123"}'
-                                })
-                                setApiResponse(JSON.stringify({
-                                  status: 201,
-                                  data: {id: 3, username: "newuser", email: "new@example.com"}
-                                }, null, 2))
-                              }}
-                            >
-                              Probar
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </main>
-        </div>
-      </div>
+[deploy]
+startCommand = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+
+[env]
+PORT = "8000"
+DEBUG = "false"
+
+[[services]]
+name = "web"
+internal_port = 8000
+protocol = "TCP"`}
+                            language="toml"
+                            id="railway-config"
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Despliegue en Servidor VPS</h3>
+                  <CodeBlock
+                    code={`# Instalar dependencias
+sudo apt update
+sudo apt install -y python3-pip python3-venv nginx
+
+# Crear usuario y directorio
+sudo useradd -m -s /bin/bash fastapi
+sudo su - fastapi
+
+# Clonar repositorio
+git clone https://github.com/yourusername/yourproject.git
+cd yourproject
+
+# Crear entorno virtual
+python3 -m venv venv
+source venv/bin/activate
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Configurar variables de entorno
+cp .env.example .env
+nano .env
+
+# Probar aplicación
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# Configurar systemd service
+sudo nano /etc/systemd/system/fastapi.service
+[Unit]
+Description=FastAPI Application
+After=network.target
+
+[Service]
+User=fastapi
+Group=fastapi
+WorkingDirectory=/home/fastapi/yourproject
+Environment=PATH=/home/fastapi/yourproject/venv/bin
+ExecStart=/home/fastapi/yourproject/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+# Iniciar servicio
+sudo systemctl daemon-reload
+sudo systemctl enable fastapi
+sudo systemctl start fastapi
+sudo systemctl status fastapi
+
+# Configurar Nginx
+sudo nano /etc/nginx/sites-available/fastapi
+server {
+    listen 80;
+    server_name yourdomain.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# Habilitar sitio
+sudo ln -s /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+
+# Configurar SSL con Certbot
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d yourdomain.com`}
+                    language="bash"
+                    id="vps-deployment"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Monitoreo y Logging</h3>
+                  <CodeBlock
+                    code={`# app/core/logging.py
+import logging
+import sys
+from pathlib import Path
+from logging.handlers import RotatingFileHandler
+
+def setup_logging():
+    # Crear directorio de logs
+    log_dir = Path("logs")
+    log_dir.mkdir(exist_ok=True)
+    
+    # Configurar formato
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    
+    # Logger principal
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    
+    # Handler para consola
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    
+    # Handler para archivo (con rotación)
+    file_handler = RotatingFileHandler(
+        "logs/app.log",
+        maxBytes=10*1024*1024,  # 10MB
+        backupCount=5
+    )
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    
+    # Handler para errores
+    error_handler = RotatingFileHandler(
+        "logs/error.log",
+        maxBytes=10*1024*1024,
+        backupCount=5
+    )
+    error_handler.setLevel(logging.ERROR)
+    error_handler.setFormatter(formatter)
+    logger.addHandler(error_handler)
+
+# app/main.py
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+import time
+from app.core.logging import setup_logging
+
+setup_logging()
+
+app = FastAPI()
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    
+    # Log de solicitud
+    logger = logging.getLogger("fastapi")
+    logger.info(f"Incoming request: {request.method} {request.url}")
+    
+    response = await call_next(request)
+    
+    # Log de respuesta
+    process_time = time.time() - start_time
+    logger.info(
+        f"Completed {request.method} {request.url} "
+        f"with status {response.status_code} in {process_time:.3f}s"
+    )
+    
+    return response
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger = logging.getLogger("fastapi")
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"}
+    )
+
+# health check con métricas
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "timestamp": time.time(),
+        "version": "1.0.0"
+    }`}
+                    language="python"
+                    id="monitoring-logging"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">CI/CD con GitHub Actions</h3>
+                  <CodeBlock
+                    code={`name: Deploy FastAPI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run tests
+      run: |
+        pytest --cov=app --cov-report=xml
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+        SECRET_KEY: test-secret-key
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Render
+      run: |
+        curl -X POST \\
+          -H "Authorization: Bearer ${'${'}{ secrets.RENDER_API_KEY }}" \\
+          -H "Content-Type: application/json" \\
+          -d '{"serviceId": "${'${'}{ secrets.RENDER_SERVICE_ID }}"}' \\
+          https://api.render.com/v1/services/${'${'}{ secrets.RENDER_SERVICE_ID }}/deploys
+    
+    - name: Deploy to Railway
+      run: |
+        npm install -g @railway/cli
+        railway login --token ${'${'}{ secrets.RAILWAY_TOKEN }}
+        railway up`}
+                    language="yaml"
+                    id="github-actions"
+                  />
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-3">Checklist de Producción</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Antes del Despliegue</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <ul className="text-xs text-muted-foreground space-y-1">
+                          <li>□ Desactivar modo debug</li>
+                          <li>□ Configurar variables de entorno</li>
+                          <li>□ Actualizar dependencias</li>
+                          <li>□ Ejecutar todas las pruebas</li>
+                          <li>□ Revisar seguridad de la API</li>
+                          <li>□ Configurar CORS correctamente</li>
+                          <li>□ Implementar rate limiting</li>
+                          <li>□ Configurar logging adecuado</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">Después del Despliegue</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <ul className="text-xs text-muted-foreground space-y-1">
+                          <li>□ Verificar health check</li>
+                          <li>□ Probar todos los endpoints</li>
+                          <li>□ Configurar monitoreo</li>
+                          <li>□ Establecer alertas</li>
+                          <li>□ Configurar backups</li>
+                          <li>□ Revisar logs de errores</li>
+                          <li>□ Probar rendimiento</li>
+                          <li>□ Verificar SSL/TLS</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </main>
 
       {/* Footer */}
-      <footer className="border-t bg-gradient-to-r from-blue-50 to-purple-50 mt-12">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              © 2025 Guía FastAPI. Desarrollado con ❤️ para la comunidad Python.
-            </p>
-            <div className="flex gap-4 mt-4 md:mt-0">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => window.location.href = '/detailed-guide'}
-                className="flex items-center gap-2 hover:bg-blue-100"
-              >
-                <GraduationCap className="h-4 w-4" />
-                Guía Detallada
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => window.location.href = '/practical-example'}
-                className="flex items-center gap-2 hover:bg-green-100"
-              >
-                <Rocket className="h-4 w-4" />
-                Ejemplo Práctico
-              </Button>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 hover:bg-blue-100">
-                <ExternalLink className="h-4 w-4 mr-2" />
+      <footer className="glass border-t border-white/20 backdrop-blur-lg">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-center md:text-left">
+              <p className="text-sm text-white/90 flex items-center justify-center md:justify-start gap-2">
+                © 2025 Guía FastAPI. Desarrollado con 
+                <span className="text-red-400 animate-pulse">❤️</span> 
+                para estudiantes
+              </p>
+            </div>
+            <div className="flex gap-4">
+              <Button className="glass hover:bg-white/20 text-white border-white/30 btn-glow">
+                <Github className="h-4 w-4 mr-2" />
                 GitHub
               </Button>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 hover:bg-blue-100">
-                <BookOpen className="h-4 w-4 mr-2" />
-                Documentación
+              <Button className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white border-0 btn-glow">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Documentación Oficial
               </Button>
             </div>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
