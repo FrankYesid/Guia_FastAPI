@@ -78,7 +78,7 @@ export default function PracticalFastAPIExample() {
       projectDescription: `
 Construiremos una API de Blog completa con las siguientes características:
 
-🎯 **Core Features:**
+**Core Features:**
 • User management con autenticación JWT
 • Post management con categorías y tags
 • Comment system con moderación
@@ -998,14 +998,13 @@ Alembic nos permite:
         },
         {
           title: 'Crear migración inicial',
-          content: `Crea la migración inicial para generar todas las tablas:`,
           code: `# Generar migración inicial
 alembic revision --autogenerate -m "Initial migration"
 
 # Esto creará un archivo como: alembic/versions/001_initial_migration.py
 # El contenido será similar a:
 
-"""Initial migration
+\`\`\`Initial migration
 
 Revision ID: 001
 Revises: 
@@ -4204,8 +4203,7 @@ async def get_logs(
 • Cumplimiento de requisitos de auditoría
 • Mejor experiencia de operación`,
           tip: 'Integra con herramientas como Prometheus, Grafana, y ELK stack para monitoreo completo y visualización.'
-        }
-      ],
+      },
       practiceExercise: {
         title: 'Ejercicio Práctico Final',
         description: 'Completa el despliegue y testing del proyecto',
@@ -4244,8 +4242,8 @@ curl http://localhost:8000/api/v1/monitoring/health
 
 # Revisar logs
 docker-compose logs app | tail -n 50`
-      }
     }
+    ]
   ]
 
   const copyToClipboard = async (code: string, id: string) => {
@@ -4264,28 +4262,30 @@ docker-compose logs app | tail -n 50`
     }
   }
 
-  const CodeBlock = ({ code, language = 'python', id }: { code: string; language?: string; id: string }) => (
-    <div className="relative">
-      <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
-        <code>{code}</code>
-      </pre>
-      <Button
-        variant="outline"
-        size="sm"
-        className="absolute top-2 right-2"
-        onClick={() => copyToClipboard(code, id)}
-      >
-        {copiedCode === id ? '¡Copiado!' : <Copy className="h-4 w-4" />}
-      </Button>
-    </div>
-  )
+  const CodeBlock = ({ code, language = 'python', id }: { code: string; language?: string; id: string }) => {
+    return (
+      <div className="relative">
+        <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
+          <code>{code}</code>
+        </pre>
+        <Button
+          variant="outline"
+          size="sm"
+          className="absolute top-2 right-2"
+          onClick={() => copyToClipboard(code, id)}
+        >
+          {copiedCode === id ? '¡Copiado!' : <Copy className="h-4 w-4" />}
+        </Button>
+      </div>
+    )
+  }
 
   const currentPhaseData = projectPhases[currentPhase]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
       {/* Header */}
-      <header className="border-b bg-white/95 backdrop-blur supports-\[backdrop-filter\]:bg-white/60 shadow-sm">
+      <header className="border-b bg-white shadow-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
